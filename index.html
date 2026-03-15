@@ -681,61 +681,13 @@ document.addEventListener('click',e=>{
   let f=0;
   function draw(){
     cx.clearRect(0,0,96,128);
-    const gl=Math.sin(f*.022)*3.5, bob=Math.sin(f*.038)*1.8;
-    const sw=Math.sin(f*.045)*5, arm=Math.sin(f*.032)*6, ln=Math.sin(f*.022)*1.5;
-    const ox=48+gl, oy=108+bob;
-    // trail
-    for(let i=6;i>=0;i--) p(ox-20+i*6,oy+2,14,2,'#a8d8f4',(1-i/7)*.2);
-    // shadow
-    cx.globalAlpha=.28;cx.fillStyle='rgba(0,60,0,.4)';cx.beginPath();cx.ellipse(ox,oy+5,18,4,0,0,Math.PI*2);cx.fill();cx.globalAlpha=1;
-    // BACK LEG
-    const blx=ox+2+sw*.7;
-    p(blx-6,oy-8,14,9,SK.bootSh);p(blx-6,oy-8,14,3,'rgba(255,255,255,.3)');
-    p(blx-7,oy+1,16,2,SK.blade);p(blx-7,oy+1,10,1,'rgba(255,255,255,.75)');
-    p(blx-7,oy-22,13,16,SK.pantsSh);p(blx-7,oy-22,5,8,'rgba(255,255,255,.08)');
-    // FRONT LEG
-    const flx=ox-4-sw*.7;
-    p(flx-5,oy-8,14,9,SK.boot);p(flx-5,oy-8,14,3,'rgba(255,255,255,.5)');p(flx+5,oy-8,4,9,SK.bootSh,.45);
-    p(flx-6,oy+1,16,2,SK.blade);p(flx-6,oy+1,11,1,'rgba(255,255,255,.85)');
-    p(flx-6,oy-22,13,16,SK.pants);p(flx-6,oy-22,5,8,'rgba(255,255,255,.13)');p(flx+4,oy-22,4,16,SK.pantsSh,.4);
-    // SKIRT
-    const sy=oy-32;
-    p(ox-18+ln,sy,36,12,SK.top);p(ox-18+ln,sy,36,4,SK.topHi,.6);p(ox-18+ln,sy+8,36,4,SK.topSh,.5);
-    p(ox-18+ln,sy+10,36,2,'rgba(255,255,255,.18)');p(ox+14+ln,sy,4,12,SK.topSh,.45);
-    // TORSO
-    const ty=oy-62;
-    p(ox-12+ln,ty,24,32,SK.top);p(ox-12+ln,ty,8,32,SK.topHi,.25);p(ox+6+ln,ty,6,32,SK.topSh,.38);
-    p(ox-10+ln,ty,18,3,'rgba(255,255,255,.28)');p(ox-5+ln,ty,10,4,SK.topSh);
-    // LEFT ARM
-    const lax=ox-22+ln, lay=ty+4-arm;
-    p(lax,lay,11,7,SK.top);p(lax,lay,11,2,SK.topHi,.3);p(lax,lay+4,11,3,SK.topSh,.35);
-    p(lax-7,lay+3,9,5,SK.top);
-    p(lax-13,lay+3,8,7,SK.glv);p(lax-13,lay+3,8,2,'rgba(255,255,255,.55)');p(lax-13,lay+8,8,2,SK.gloveSh,.5);
-    // RIGHT ARM
-    const rax=ox+12+ln, ray=ty+4+arm;
-    p(rax,ray,11,7,SK.topSh);p(rax,ray,11,2,SK.top,.5);p(rax+7,ray+3,9,5,SK.topSh);
-    p(rax+14,ray+3,7,7,SK.glv);p(rax+14,ray+3,7,2,'rgba(255,255,255,.42)');
-    // NECK
-    p(ox-4+ln*.5,ty-6,8,7,SK.skin);p(ox-4+ln*.5,ty-6,8,3,SK.skinHi,.28);p(ox+1+ln*.5,ty-6,3,7,SK.skinSh,.28);
-    // HEAD
-    const hx=ox-12+ln*.4, hy=ty-24, hw=24, hh=24;
-    p(hx,hy,hw,hh,SK.skin);
-    p(hx,hy,hw,6,SK.skinSh,.28);p(hx+2,hy+6,9,10,SK.skinHi,.32);p(hx+16,hy+2,8,hh,SK.skinSh,.3);p(hx,hy+18,hw,6,SK.skinSh,.2);
-    // eyes
-    p(hx+4,hy+7,5,5,'#1a0a08');p(hx+5,hy+8,3,3,'#2850a0');p(hx+6,hy+8,1,2,'#000');
-    p(hx+4,hy+7,2,1,'rgba(255,255,255,.8)');p(hx+4,hy+6,5,1,'rgba(0,0,0,.52)');
-    p(hx+15,hy+7,5,5,'#1a0a08');p(hx+16,hy+8,3,3,'#2850a0');p(hx+17,hy+8,1,2,'#000');
-    p(hx+15,hy+7,2,1,'rgba(255,255,255,.8)');p(hx+15,hy+6,5,1,'rgba(0,0,0,.52)');
-    // nose
-    p(hx+10,hy+13,5,4,SK.skinSh,.48);p(hx+10,hy+15,5,2,SK.skinSh,.32);
-    // mouth
-    p(hx+6,hy+18,12,3,'#a04030',.7);p(hx+7,hy+17,10,1,'#d06050',.48);
-    // HAIR
-    p(hx-2,hy+3,4,20,SK.hair);p(hx+22,hy+3,4,20,SK.hairDk);
-    p(hx,hy-5,hw,7,SK.hair);p(hx,hy,hw,6,SK.hair);p(hx+2,hy+4,7,4,SK.hairDk,.55);
-    p(hx+4,hy-3,12,3,'rgba(255,255,255,.12)');
-    // ponytail
-    p(hx+20,hy+2,6,22,SK.hair);p(hx+22,hy+10,4,18,SK.hairDk);p(hx+24,hy+20,3,10,SK.hair,.7);
+    const lg=Math.round(Math.sin(f*.045)*3);
+    const ar=Math.round(Math.sin(f*.045)*3);
+    // foot point at (48, 118) on 96×128 canvas
+    drawSkaterAt(cx, 48, 118,
+      '#e8a870','#5a2808','#c82038',
+      true, 'walk', {leg:lg, arm:ar, jumpH:0}
+    );
     f++;
     requestAnimationFrame(draw);
   }
@@ -838,69 +790,173 @@ function startCareer(){
   startGame();
 }
 
-/* ── Preview renderer ── */
+/* ── Preview renderer — 80×110 canvas, foot at y=105, center at x=40 ── */
 const pvc=document.getElementById('previewCanvas');
 const pvx=pvc.getContext('2d');pvx.imageSmoothingEnabled=false;
-function dk(h,f){const c=hr(h);return`rgb(${Math.round(c[0]*f)},${Math.round(c[1]*f)},${Math.round(c[2]*f)})`;}
-function lt(h,f){const c=hr(h);return`rgb(${Math.min(255,Math.round(c[0]*f))},${Math.min(255,Math.round(c[1]*f))},${Math.min(255,Math.round(c[2]*f))})`;}
-function hr(h){const n=parseInt(h.replace('#',''),16);return[(n>>16)&255,(n>>8)&255,n&255];}
+function _cRgb(h){const n=parseInt(h.replace('#',''),16);return[(n>>16)&255,(n>>8)&255,n&255];}
+function _cDk(h,t){const c=_cRgb(h);return`rgb(${~~(c[0]*t)},${~~(c[1]*t)},${~~(c[2]*t)})`;}
+function _cLt(h,t){const c=_cRgb(h);return`rgb(${Math.min(255,~~(c[0]*t))},${Math.min(255,~~(c[1]*t))},${Math.min(255,~~(c[2]*t))})`;}
+
+// ── Shared colour helpers (used by preview + game skater) ──
+function _sRgb(h){const n=parseInt(h.replace('#',''),16);return[(n>>16)&255,(n>>8)&255,n&255];}
+function _sDk(h,t){const[r,g,b]=_sRgb(h);return`rgb(${~~(r*t)},${~~(g*t)},${~~(b*t)})`;}
+function _sLt(h,t){const[r,g,b]=_sRgb(h);return`rgb(${Math.min(255,~~(r*t))},${Math.min(255,~~(g*t))},${Math.min(255,~~(b*t))})`;}
+
+/* ════════════════════════════════════════════
+   UNIVERSAL SKATER DRAW FUNCTION
+   cx,cy = foot-center (integer canvas pixels)
+   state = 'walk' | 'spin' | 'pose'
+   anim  = { leg:±3, arm:±3, spinT:0-1, jumpH:0+ }
+   Sprite is ~46px tall, ~28px wide.
+   Works on the 80×110 preview canvas AND 480×270 game canvas.
+════════════════════════════════════════════ */
+function drawSkaterAt(ctx, cx, cy, skin, hair, outfit, female, state, anim){
+  cx=Math.round(cx); cy=Math.round(cy);
+  const skinSh=_sDk(skin,.68), skinHi=_sLt(skin,1.2);
+  const hairDk=_sDk(hair,.62);
+  const outSh=_sDk(outfit,.68), outHi=_sLt(outfit,1.28);
+  const legC  = female ? '#8888b4' : '#182060';
+  const legDk = female ? '#5a5a8a' : '#10143c';
+
+  // b(dx,dy,w,h,col,alpha)  — dx/dy are OFFSETS from foot point (cx,cy)
+  function b(dx,dy,w,h,col,a){
+    if(a!==undefined)ctx.globalAlpha=a;
+    ctx.fillStyle=col;
+    ctx.fillRect(cx+dx, cy+dy, w, h);
+    ctx.globalAlpha=1;
+  }
+
+  const lg = anim.leg  ?? 0;  // leg swing ±3px
+  const ar = anim.arm  ?? 0;  // arm swing ±3px
+  const jh = anim.jumpH?? 0;  // jump height px (already subtracted from cy by caller)
+
+  // Ground shadow
+  ctx.globalAlpha=.2;ctx.fillStyle='rgba(30,90,150,.4)';
+  ctx.beginPath();ctx.ellipse(cx,cy+1,8+jh*.2,2,0,0,Math.PI*2);ctx.fill();
+  ctx.globalAlpha=1;
+
+  // ══ SPIN ══════════════════════════════════
+  if(state==='spin'){
+    const sp=Math.sin((anim.spinT??0)*Math.PI*10)*2;
+    // motion blur overlay
+    ctx.globalAlpha=.18;ctx.fillStyle='#fff';ctx.fillRect(cx-6+sp,cy-44,12,42);ctx.globalAlpha=1;
+    // compressed body
+    b(-3+sp,-36, 6,14,outfit);
+    b(-3+sp,-36, 6, 4,outHi,.5); b(2+sp,-36,2,14,outSh,.4);
+    // hip
+    b(-3+sp,-22, 6, 8,legC);
+    // boot
+    b(-3+sp,-14, 6, 7,'#e8e8f2'); b(-3+sp,-14,6,2,'rgba(255,255,255,.5)');
+    b(-4+sp, -7, 8, 1,'#c0d8f8');
+    // neck
+    b(-2+sp,-40, 4, 5,skin);
+    // head
+    b(-4+sp,-50, 9,10,skin);
+    b(-4+sp,-50, 9, 3,skinSh,.25); b(3+sp,-50,3,10,skinSh,.3);
+    b(-2+sp,-46, 3, 3,'#1a0a08'); b(-2+sp,-46,1,1,'rgba(255,255,255,.85)');
+    b( 1+sp,-46, 3, 3,'#1a0a08'); b( 1+sp,-46,1,1,'rgba(255,255,255,.85)');
+    b(-4+sp,-52, 9, 4,hair); b(3+sp,-50,3,8,hairDk);
+    if(female){b(3+sp,-48,3,11,hair);}
+    return;
+  }
+
+  // ══ ARABESQUE POSE ════════════════════════
+  if(state==='pose'){
+    // standing leg
+    b(-3,-18, 6, 9,legC);
+    b(-4,-10, 8, 7,'#e8e8f2'); b(-4,-10,8,2,'rgba(255,255,255,.5)');
+    b(-5, -3,10, 1,'#c0d8f8'); b(-5,-3,7,1,'rgba(255,255,255,.85)');
+    // extended leg (out to the right, slightly lifted)
+    b( 2,-14,15, 4,legC);
+    b(15,-13, 6, 4,'#e8e8f2'); b(19,-11, 7,1,'#c0d8f8');
+    // torso (forward lean)
+    b(-6,-30,13,12,outfit);
+    b(-6,-30,13, 4,outHi,.5); b(5,-30,4,12,outSh,.4);
+    b(-5,-30, 9, 2,'rgba(255,255,255,.22)');
+    // arms spread
+    b(-17,-27,11, 4,outfit);  b(-20,-27,4, 5,'#f0f0f4');
+    b(  6,-27,11, 4,outSh);   b( 16,-27,4, 5,'#f0f0f4');
+    // neck
+    b(-3,-35, 6, 6,skin);
+    // head
+    const hy=-47;
+    b(-5,hy,11,12,skin);
+    b(-5,hy,11, 4,skinSh,.26); b(4,hy,3,12,skinSh,.3); b(-5,hy+9,11,3,skinSh,.18);
+    b(-3,hy+4,3,3,'#1a0a08'); b(-3,hy+4,1,1,'rgba(255,255,255,.9)'); b(-3,hy+3,3,1,'rgba(0,0,0,.5)');
+    b( 1,hy+4,3,3,'#1a0a08'); b( 1,hy+4,1,1,'rgba(255,255,255,.9)'); b( 1,hy+3,3,1,'rgba(0,0,0,.5)');
+    b(-2,hy+8,6,2,'#a04030',.65);
+    b(-5,hy-3,11,5,hair); b(-5,hy,2,11,hair); b(4,hy,3,11,hairDk);
+    b(-4,hy,9,3,hair);    b(2,hy-2,7,2,'rgba(255,255,255,.1)');
+    if(female){b(4,hy,3,14,hair); b(5,hy+7,2,8,hairDk);}
+    return;
+  }
+
+  // ══ NORMAL WALK / SKATE ═══════════════════
+  // Back leg (slightly behind, darker)
+  b( lg+1,-18, 6, 9,legDk);
+  b( lg,   -9, 8, 6,'#d8d8ea'); b(lg,-9,8,2,'rgba(255,255,255,.35)'); b(lg+5,-9,3,6,'rgba(0,0,0,.12)');
+  b( lg-1,  -3,10, 1,'#b8cce8');
+
+  // Front leg (forward, brighter)
+  b(-lg-5,-18, 6, 9,legC); b(-lg-5,-18,2,5,'rgba(255,255,255,.12)');
+  b(-lg-6, -9, 8, 6,'#e8e8f2'); b(-lg-6,-9,8,2,'rgba(255,255,255,.5)'); b(-lg, -9,3,6,'rgba(0,0,0,.14)');
+  b(-lg-7,  -3,10, 1,'#c0d8f8'); b(-lg-7,-3,7,1,'rgba(255,255,255,.85)');
+
+  // Skirt / hip
+  if(female){
+    b(-8,-24,16, 7,outfit);
+    b(-8,-24,16, 3,outHi,.5); b(-8,-19,16,2,outSh,.45);
+    b(-8,-18,16, 1,'rgba(255,255,255,.18)'); b(6,-24,3,7,outSh,.4);
+  }
+
+  // Torso
+  const tH=female?11:13, tY=-(24+tH);
+  b(-7,tY,14,tH,outfit);
+  b(-7,tY, 5,tH,outHi,.24); b(5,tY,4,tH,outSh,.36);
+  b(-5,tY,10, 2,'rgba(255,255,255,.25)'); b(-3,tY,7,3,outSh);
+
+  // Left arm (swings with leg)
+  b(-15,tY+2-ar, 8,5,outfit);  b(-15,tY+2-ar,8,2,outHi,.28);
+  b(-21,tY+4-ar, 7,4,outfit);
+  b(-24,tY+4-ar, 5,5,'#f0f0f4'); b(-24,tY+4-ar,5,2,'rgba(255,255,255,.55)');
+  // Right arm
+  b(  7,tY+2+ar, 8,5,outSh);  b(7,tY+2+ar,8,2,outfit,.4);
+  b( 13,tY+4+ar, 7,4,outSh);
+  b( 18,tY+4+ar, 5,5,'#f0f0f4'); b(18,tY+4+ar,5,2,'rgba(255,255,255,.42)');
+
+  // Neck
+  b(-3,tY-5, 6,6,skin); b(-3,tY-5,6,2,skinHi,.28);
+
+  // Head — 11×12px
+  const hy=tY-17;
+  b(-5,hy,11,12,skin);
+  b(-5,hy,11, 4,skinSh,.26); b(-4,hy+3,5,6,skinHi,.3); b(4,hy+1,3,11,skinSh,.28);
+  // left eye
+  b(-3,hy+4,3,3,'#1a0a08'); b(-2,hy+5,2,2,'#2850a0'); b(-1,hy+5,1,1,'#000');
+  b(-3,hy+4,1,1,'rgba(255,255,255,.9)'); b(-3,hy+3,3,1,'rgba(0,0,0,.5)');
+  // right eye
+  b( 1,hy+4,3,3,'#1a0a08'); b( 2,hy+5,2,2,'#2850a0'); b( 3,hy+5,1,1,'#000');
+  b( 1,hy+4,1,1,'rgba(255,255,255,.9)'); b( 1,hy+3,3,1,'rgba(0,0,0,.5)');
+  // nose
+  b(-1,hy+7,3,2,skinSh,.45);
+  // mouth
+  b(-3,hy+9,7,2,'#a04030',.65); b(-2,hy+8,5,1,'#d06050',.42);
+  // Hair
+  b(-5,hy-3,11, 4,hair); b(-5,hy, 2,11,hair); b(4,hy, 3,11,hairDk);
+  b(-4,hy,   9, 3,hair); b(2,hy-2,7,2,'rgba(255,255,255,.1)');
+  if(female){b(4,hy+2,3,13,hair); b(5,hy+8,2,7,hairDk);}
+}
+
+/* ── Preview renderer — just calls the shared function ── */
+const pvc=document.getElementById('previewCanvas');
+const pvx=pvc.getContext('2d');pvx.imageSmoothingEnabled=false;
 
 function renderPreview(){
   pvx.clearRect(0,0,80,110);
-  const sk=SKINS[CUR.skin],skSh=dk(sk,.68),skHi=lt(sk,1.22);
-  const hr2=HAIRS[CUR.hair],hrDk=dk(hr2,.64);
-  const ot=OUTFITS[CUR.outfit],otHi=lt(ot,1.3),otSh=dk(ot,.68);
-  const fe=CUR.gender==='female';
-  function r(x,y,w,h,c,a){if(a!==undefined)pvx.globalAlpha=a;pvx.fillStyle=c;pvx.fillRect(Math.round(x),Math.round(y),w,h);pvx.globalAlpha=1;}
-
-  // shadow
-  pvx.globalAlpha=.28;pvx.fillStyle='rgba(40,120,10,.4)';pvx.beginPath();pvx.ellipse(40,107,16,4,0,0,Math.PI*2);pvx.fill();pvx.globalAlpha=1;
-
-  // blades
-  r(14,103,16,2,'#c0d8f4');r(50,103,16,2,'#c0d8f4');
-  r(14,103,10,1,'rgba(255,255,255,.75)');r(50,103,10,1,'rgba(255,255,255,.75)');
-
-  // boots
-  r(13,93,16,11,'#e8e8f2');r(49,93,16,11,'#e8e8f2');
-  r(13,93,16,3,'rgba(255,255,255,.5)');r(49,93,16,3,'rgba(255,255,255,.5)');
-  r(27,93,3,11,'rgba(0,0,0,.14)');r(63,93,3,11,'rgba(0,0,0,.14)');
-
-  if(fe){
-    // tights
-    r(15,73,13,22,'#9090b8');r(52,73,13,22,dk('#9090b8',.78));r(15,73,5,10,'rgba(255,255,255,.1)');
-    // skirt
-    r(10,64,60,13,ot);r(10,64,60,4,otHi,.5);r(10,72,60,5,otSh,.45);r(10,74,60,2,'rgba(255,255,255,.15)');
-  } else {
-    // trousers
-    r(15,70,12,25,'#182058');r(53,70,12,25,'#101440');r(15,70,5,12,'rgba(255,255,255,.1)');r(15,70,27,3,'rgba(0,0,0,.22)');
-  }
-
-  // torso
-  const torY=fe?40:36;
-  r(18,torY,44,fe?27:33,ot);r(18,torY,44,7,otHi,.4);r(18,torY,14,fe?27:33,otHi,.2);r(48,torY,14,fe?27:33,otSh,.35);
-  r(32,torY,16,5,otSh);
-  // arms
-  r(5,torY+4,13,8,ot);r(5,torY+4,13,3,otHi,.3);r(2,torY+10,8,7,ot);
-  r(0,torY+10,9,9,'#f0f0f4');r(0,torY+10,9,2,'rgba(255,255,255,.5)');
-  r(62,torY+4,13,8,otSh);r(68,torY+10,8,7,otSh);r(67,torY+10,9,9,'#f0f0f4');
-  // neck
-  r(36,torY-3,8,7,sk);
-
-  // head
-  const hx=29,hy=12;
-  r(hx,hy,22,23,sk);
-  r(hx,hy,22,6,skSh,.28);r(hx+2,hy+5,9,11,skHi,.32);r(hx+14,hy+2,8,23,skSh,.28);r(hx,hy+17,22,6,skSh,.2);
-  // eyes
-  r(hx+3,hy+6,5,5,'#1a0a08');r(hx+4,hy+7,3,3,'#2850a0');r(hx+5,hy+7,1,2,'#000');r(hx+3,hy+6,2,1,'rgba(255,255,255,.8)');r(hx+3,hy+5,5,1,'rgba(0,0,0,.5)');
-  r(hx+14,hy+6,5,5,'#1a0a08');r(hx+15,hy+7,3,3,'#2850a0');r(hx+16,hy+7,1,2,'#000');r(hx+14,hy+6,2,1,'rgba(255,255,255,.8)');r(hx+14,hy+5,5,1,'rgba(0,0,0,.5)');
-  // nose
-  r(hx+9,hy+12,5,4,skSh,.5);
-  // mouth
-  r(hx+5,hy+17,12,3,'#a04030',.7);r(hx+6,hy+16,10,1,'#d06050',.45);
-  // hair
-  r(hx-2,hy+3,4,19,hr2);r(hx+20,hy+3,4,20,hrDk);
-  r(hx,hy-4,22,7,hr2);r(hx,hy,22,6,hr2);r(hx+2,hy+4,7,4,hrDk,.55);r(hx+4,hy-3,12,3,'rgba(255,255,255,.12)');
-  if(fe){r(hx+18,hy+2,6,22,hr2);r(hx+20,hy+10,4,16,hrDk);r(hx+22,hy+20,3,10,hr2,.7);}
+  drawSkaterAt(pvx, 40, 104,
+    SKINS[CUR.skin], HAIRS[CUR.hair], OUTFITS[CUR.outfit],
+    CUR.gender==='female', 'walk', {leg:0,arm:0,jumpH:0}
+  );
 }
 
 /* ════════════════════════════════════════════
@@ -1227,147 +1283,31 @@ function drawPopups2(){
   gCtx.globalAlpha=1;gCtx.textAlign='left';
 }
 
-/* ────────────────────────────────────────────
-   IN-GAME SKATER DRAWING — high quality, matches RST
-──────────────────────────────────────────── */
+/* ─────────────────────────────────────────────────────────────
+   IN-GAME SKATER — delegates to shared drawSkaterAt()
+───────────────────────────────────────────────────────────── */
 function drawGameSkater(){
   if(!gameData)return;
-  const C=gCtx;
   const gsk=gameData.skater;
-  const skin =SKINS[gsk.skin??1];
-  const hair =HAIRS[gsk.hair??4];
+  const skin  =SKINS  [gsk.skin  ??1];
+  const hair  =HAIRS  [gsk.hair  ??4];
   const outfit=OUTFITS[gsk.outfit??0];
   const female=gsk.gender==='female';
-
   const ox=Math.round(SK2.x);
   const by=Math.round(SK2.y);
   const jh=Math.round(SK2.jumpH);
-  const oy=by-jh;
-  const f=SK2.facing;
+  const oy=by-jh;   // visual foot Y (elevated during jump)
 
-  // colour helpers (inline)
-  function rgb(h){const n=parseInt(h.replace('#',''),16);return[(n>>16)&255,(n>>8)&255,n&255];}
-  function darker(h,fac){const c=rgb(h);return`rgb(${Math.round(c[0]*fac)},${Math.round(c[1]*fac)},${Math.round(c[2]*fac)})`;}
-  function lighter(h,fac){const c=rgb(h);return`rgb(${Math.min(255,Math.round(c[0]*fac))},${Math.min(255,Math.round(c[1]*fac))},${Math.min(255,Math.round(c[2]*fac))})`;}
+  const wf=Math.floor(SK2.walkT*4)%4;
+  const lg=[0,3,0,-3][wf];
+  const ar=[0,3,0,-3][wf];
 
-  const skinSh=darker(skin,.68), skinHi=lighter(skin,1.2);
-  const hairDk=darker(hair,.62);
-  const outSh=darker(outfit,.68), outHi=lighter(outfit,1.28);
-
-  function p(x,y,w,h,col,a){
-    if(a!==undefined)C.globalAlpha=a;
-    C.fillStyle=col;C.fillRect(Math.round(x),Math.round(y),w,h);
-    C.globalAlpha=1;
-  }
-
-  // Shadow (grows with height)
-  const sw=12+jh*.4;
-  C.globalAlpha=.25;C.fillStyle='rgba(40,100,160,.4)';
-  C.beginPath();C.ellipse(ox,by+3,sw,3,0,0,Math.PI*2);C.fill();C.globalAlpha=1;
-
-  // Scale: 1px = ~2 game units for a properly sized skater
-  const S=1.15; // scale multiplier
-  function ps(x,y,w,h,col,a){ p(ox+Math.round(x*S),oy+Math.round(y*S),Math.round(w*S),Math.round(h*S),col,a); }
-
-  if(SK2.spinning){
-    // Tight spinning pose — body compressed
-    const sp=Math.sin(SK2.spinT*Math.PI*8)*2.5;
-    ps(-4+sp,-28,8,22,outfit);ps(-4+sp,-28,8,6,outHi,.5);ps(2+sp,-28,3,22,outSh,.4);
-    ps(-3,-34,6,8,skin);ps(-2,-36,4,2,hair);
-    C.globalAlpha=.35;C.fillStyle='#fff';C.fillRect(Math.round(ox-8),Math.round(oy-36),16,32);C.globalAlpha=1;
-    if(SK2.spinT<.35)addSparkles(ox,oy-20,1);
-  } else if(SK2.posing){
-    // Arabesque: one leg extended
-    // standing leg
-    ps(-2,-10,7,12,female?darker('#9090b8',.75):'#101440');
-    ps(-3,-6,9,10,'#e8e8f2');ps(-4,-1,11,2,'#c0d8f8');
-    // extended leg (direction of facing)
-    ps(f*2,-8,f*16,5,female?outfit:'#182058');ps(f*14,-8,f*5,3,'#e8e8f2');ps(f*15,-6,f*7,2,'#c0d8f8');
-    // torso
-    ps(-6,-26,14,18,outfit);ps(-6,-26,14,5,outHi,.45);ps(4,-26,5,18,outSh,.4);
-    // arms out
-    ps(-16,-22,10,4,outfit);ps(6,-22,10,4,outSh);
-    ps(-19,-22,4,5,'#f0f0f4');ps(16,-22,4,5,'#f0f0f4');
-    // neck + head
-    ps(-3,-32,6,7,skin);
-    ps(-8,-44,16,14,skin);ps(-8,-44,16,5,skinSh,.25);ps(4,-44,5,14,skinSh,.28);
-    ps(-6,-38,4,4,'#1a0a08');ps(1,-38,4,4,'#1a0a08');
-    ps(-6,-38,1,1,'rgba(255,255,255,.8)');ps(1,-38,1,1,'rgba(255,255,255,.8)');
-    ps(-4,-33,10,2,'#a04030',.65);
-    // hair
-    ps(-8,-46,16,5,hair);ps(-10,-42,3,14,hair);ps(8,-42,3,16,hairDk);ps(8,-34,3,8,hair,.7);
-  } else {
-    // Normal skating with walk cycle
-    const wf=Math.floor(SK2.walkT*5)%4;
-    const lg=[0,3,0,-3][wf];
-
-    // BACK LEG
-    const blx=f>0?3:-5;
-    ps(blx-lg,-10+Math.abs(lg)*.3,10,12,female?darker('#9090b8',.75):'#101440');
-    ps(blx-lg,-2+Math.abs(lg)*.3,12,8,'#e8e8f2');
-    ps(blx-lg,-2+Math.abs(lg)*.3,12,3,'rgba(255,255,255,.32)');
-    ps(blx-lg+8,-2+Math.abs(lg)*.3,3,8,'rgba(0,0,0,.14)');
-    ps(blx-lg-1,6+Math.abs(lg)*.3,14,2,'#c0d8f8');p(ox+Math.round((blx-lg-1)*S),oy+Math.round((6+Math.abs(lg)*.3)*S),Math.round(14*S),1,'rgba(255,255,255,.75)');
-
-    // FRONT LEG
-    const flx=f>0?-5:3;
-    ps(flx+lg,-12-Math.abs(lg)*.3,10,14,female?'#9090b8':'#182058');
-    ps(flx+lg,-12-Math.abs(lg)*.3,4,8,'rgba(255,255,255,.13)');ps(flx+lg+6,-12-Math.abs(lg)*.3,4,14,outSh,.35);
-    ps(flx+lg,-2-Math.abs(lg)*.3,12,9,'#e8e8f2');
-    ps(flx+lg,-2-Math.abs(lg)*.3,12,3,'rgba(255,255,255,.5)');ps(flx+lg+8,-2-Math.abs(lg)*.3,3,9,'rgba(0,0,0,.14)');
-    ps(flx+lg-1,7-Math.abs(lg)*.3,15,2,'#c0d8f8');p(ox+Math.round((flx+lg-1)*S),oy+Math.round((7-Math.abs(lg)*.3)*S),Math.round(11*S),1,'rgba(255,255,255,.85)');
-
-    // SKIRT/HIP
-    if(female){
-      ps(-11,-22,22,10,outfit);ps(-11,-22,22,4,outHi,.5);ps(-11,-16,22,4,outSh,.45);ps(-11,-14,22,2,'rgba(255,255,255,.18)');ps(7,-22,5,10,outSh,.4);
-    } else {
-      // belt line
-      ps(-10,-22,20,3,outSh,.5);
-    }
-
-    // TORSO
-    const torH=female?22:28;
-    ps(-10,-22-torH,20,torH,outfit);
-    ps(-10,-22-torH,7,torH,outHi,.24);ps(4,-22-torH,7,torH,outSh,.36);
-    ps(-8,-22-torH,14,3,'rgba(255,255,255,.26)');
-    ps(-5,-22-torH,10,4,outSh); // collar
-
-    // LEFT ARM
-    const larmY=-18-torH+4+lg*.4;
-    ps(-20,-18-torH+4-lg*.4,12,7,outfit);ps(-20,-18-torH+4-lg*.4,12,2,outHi,.28);ps(-20,-18-torH+8-lg*.4,12,3,outSh,.32);
-    ps(-27,-18-torH+6-lg*.4,9,6,outfit);
-    ps(-33,-18-torH+6-lg*.4,8,8,'#f0f0f4');ps(-33,-18-torH+6-lg*.4,8,2,'rgba(255,255,255,.55)');ps(-33,-18-torH+12-lg*.4,8,2,'rgba(200,200,204,.5)');
-
-    // RIGHT ARM
-    ps(8,-18-torH+4+lg*.4,12,7,outSh);ps(8,-18-torH+4+lg*.4,12,2,outfit,.45);
-    ps(17,-18-torH+6+lg*.4,9,6,outSh);
-    ps(23,-18-torH+6+lg*.4,8,8,'#f0f0f4');ps(23,-18-torH+6+lg*.4,8,2,'rgba(255,255,255,.45)');
-
-    // NECK
-    ps(-4,-26-torH,8,7,skin);ps(-4,-26-torH,8,3,skinHi,.28);ps(2,-26-torH,3,7,skinSh,.28);
-
-    // HEAD
-    const hx2=-11, hy2=-26-torH-20;
-    ps(hx2,hy2,22,22,skin);
-    // face shading
-    ps(hx2,hy2,22,6,skinSh,.26);ps(hx2+2,hy2+5,9,11,skinHi,.3);ps(hx2+14,hy2+2,8,22,skinSh,.28);ps(hx2,hy2+16,22,6,skinSh,.2);
-    // eyes
-    ps(hx2+3,hy2+6,5,5,'#1a0a08');ps(hx2+4,hy2+7,3,3,'#2850a0');ps(hx2+5,hy2+7,1,2,'#000');
-    ps(hx2+3,hy2+6,2,1,'rgba(255,255,255,.8)');ps(hx2+3,hy2+5,5,1,'rgba(0,0,0,.5)');
-    ps(hx2+14,hy2+6,5,5,'#1a0a08');ps(hx2+15,hy2+7,3,3,'#2850a0');ps(hx2+16,hy2+7,1,2,'#000');
-    ps(hx2+14,hy2+6,2,1,'rgba(255,255,255,.8)');ps(hx2+14,hy2+5,5,1,'rgba(0,0,0,.5)');
-    // nose
-    ps(hx2+9,hy2+12,5,4,skinSh,.48);
-    // mouth
-    ps(hx2+5,hy2+17,12,3,'#a04030',.68);ps(hx2+6,hy2+16,10,1,'#d06050',.44);
-    // HAIR
-    ps(hx2-2,hy2+3,4,20,hair);ps(hx2+20,hy2+3,4,20,hairDk);
-    ps(hx2,hy2-4,22,7,hair);ps(hx2,hy2,22,6,hair);ps(hx2+2,hy2+4,7,4,hairDk,.55);
-    ps(hx2+4,hy2-3,12,3,'rgba(255,255,255,.12)');
-    if(female){ps(hx2+20,hy2+2,6,22,hair);ps(hx2+22,hy2+10,4,18,hairDk);ps(hx2+24,hy2+20,3,10,hair,.7);}
-  }
+  const state = SK2.spinning ? 'spin' : SK2.posing ? 'pose' : 'walk';
+  drawSkaterAt(gCtx, ox, oy,
+    skin, hair, outfit, female, state,
+    {leg:lg, arm:ar, spinT:SK2.spinT, jumpH:jh}
+  );
 }
-
 /* ════════════════════════════════════════════
    INIT
 ════════════════════════════════════════════ */
