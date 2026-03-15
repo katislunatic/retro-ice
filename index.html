@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure Ice</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; image-rendering: pixelated; }
+
+  body {
+    background: #0a0a1a;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    font-family: 'Press Start 2P', monospace;
+    overflow: hidden;
+  }
+
+  #gameWrapper {
+    position: relative;
+    width: 480px;
+    height: 640px;
+  }
+
+  canvas {
+    display: block;
+    width: 480px;
+    height: 640px;
+    border: 4px solid #4af;
+    box-shadow: 0 0 0 4px #0a0a1a, 0 0 0 8px #4af, 0 0 40px #4af88;
+    image-rendering: pixelated;
+  }
+
+  #ui {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 14px;
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  .score-box {
+    background: rgba(0,0,20,0.85);
+    border: 2px solid #4af;
+    padding: 6px 10px;
+    color: #fff;
+    font-size: 7px;
+    line-height: 1.8;
+  }
+
+  .score-box span { color: #4af; }
+
+  #instructions {
+    position: absolute;
+    bottom: 10px;
+    left: 0; right: 0;
+    text-align: center;
+    font-size: 6px;
+    color: #88aacc;
+    pointer-events: none;
+  }
+</style>
+</head>
+<body>
+<div id="gameWrapper">
+  <canvas id="c" width="240" height="320"></canvas>
+  <div id="ui">
+    <div class="score-box">
+      SCORE<br><span id="scoreDisplay">0</span><br>
+      COMBO<br><span id="comboDisplay">x1</span>
+    </div>
+    <div class="score-box" style="text-align:right">
+      TIME<br><span id="timeDisplay">60</span><br>
+      LEVEL<br><span id="levelDisplay">1</span>
+    </div>
+  </div>
+  <div id="instructions">← → SKATE &nbsp;|&nbsp; Z JUMP &nbsp;|&nbsp; X SPIN &nbsp;|&nbsp; SPACE POSE</div>
+</div>
+
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+ctx.imageSmoothingEnabled = false;
+
+// ── Palette ──────────────────────────────────────────────
+const C = {
+  iceDeep:  '#6ec6e8',
+  iceMid:   '#a8dff0',
+  iceLight: '#d6f3ff',
+  iceWhite: '#eef9ff',
+  rinkLine: '#7bb8d4',
+  skaterBody:'#f4c77c',
+  skaterCoat:'#e03050',
+  skaterPants:'#1a2a4a',
+  skaterBoot:'#f0f0f0',
+  sparkle:  '#ffffff',
+  gold:     '#ffd700',
+  shadow:   'rgba(30,80,120,0.18)',
+  bg:       '#0a1020',
+  crowd1:   '#c05070',
+  crowd2:   '#5080c0',
+  crowd3:   '#80c050',
+  crowd4:   '#c0a030',
+  panel:    '#0a0a1a',
+  panelBorder:'#4aaeff',
+  textMain: '#ffffff',
+  textAcc:  '#4aaeff',
+};
+
+// ── State ────────────────────────────────────────────────
+const W = 240, H = 320;
+let state = 'title'; // title | playing | judgement | gameover
+let score = 0, combo = 1, maxCombo = 1;
+let timeLeft = 60, gameTimer = 0;
+let level = 1;
+let lastTime = 0;
+
+// Skater
+const sk = {
+  x: 120, y: 200,
+  vx: 0, vy: 0,
+  facing: 1, // 1=right, -1=left
+  grounded: true,
+  jumpT: 0,    // 0..1 during jump
+  jumping: false,
+  spinT: 0,    // 0..1 during spin
+  spinning: false,
+  poseT: 0,
+  posing: false,
+  frame: 0,    // walk animation
+  frameT: 0,
+  trail: [],   // ice trail {x,y,age}
+  sparkles: [],
+  jumpHeight: 0,
+};
+
+// Move queue / input
+const keys = {};
+let moveQueue = [];
+let pendingJump = false, pendingPose = false, pendingSpin = false;
+
+// Crowd rows
+const crowd = [];
+for (let row = 0; row < 3; row++) {
+  for (let i = 0; i < 14; i++) {
+    crowd.push({
+      x: i * 18 + 5,
+      row,
+      color: [C.crowd1, C.crowd2, C.crowd3, C.crowd4][Math.floor(Math.random()*4)],
+      wave: Math.random() * Math.PI * 2,
+      waving: false,
+    });
+  }
+}
+
+// Score popups
+let popups = [];
+
+// Rink decorations
+const rinkLines = [
+  {type:'circle', cx:120, cy:200, r:40},
+  {type:'line', x1:20, y1:200, x2:220, y2:200},
+  {type:'line', x1:120, y1:160, x2:120, y2:240},
+];
+
+// Move definitions
+const MOVES = [
+  { name: 'AXEL!',      key: 'jump+spin',  pts: 800,  color: '#ffd700' },
+  { name: 'LUTZ!',      key: 'spin+jump',  pts: 700,  color: '#ff6030' },
+  { name: 'SPIRAL!',    key: 'pose',       pts: 300,  color: '#80ffcc' },
+  { name: 'SPIN!',      key: 'spin',       pts: 400,  color: '#60c0ff' },
+  { name: 'JUMP!',      key: 'jump',       pts: 200,  color: '#ffcc44' },
+  { name: 'SALCHOW!',   key: 'jump+pose',  pts: 600,  color: '#ff88cc' },
+];
+
+// ── Input ────────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if (keys[e.code]) return;
+  keys[e.code] = true;
+
+  if (state === 'title' || state === 'gameover') {
+    if (['Enter','Space','KeyZ','KeyX'].includes(e.code)) startGame();
+    return;
+  }
+  if (state === 'judgement') return;
+
+  if (e.code === 'ArrowLeft')  { sk.vx = -1.2; sk.facing = -1; }
+  if (e.code === 'ArrowRight') { sk.vx =  1.2; sk.facing =  1; }
+  if (e.code === 'KeyZ' && sk.grounded && !sk.jumping) triggerJump();
+  if (e.code === 'KeyX' && !sk.spinning) triggerSpin();
+  if (e.code === 'Space' && sk.grounded && !sk.posing) triggerPose();
+  e.preventDefault();
+});
+document.addEventListener('keyup', e => {
+  keys[e.code] = false;
+  if (e.code === 'ArrowLeft' || e.code === 'ArrowRight') sk.vx *= 0.3;
+});
+
+// Touch / mobile buttons (appended below canvas)
+function addTouchBtn(label, action, side) {
+  const btn = document.createElement('button');
+  btn.textContent = label;
+  btn.style.cssText = `
+    position:absolute; bottom:30px;
+    ${side}: 10px;
+    font-family:'Press Start 2P',monospace;
+    font-size:8px;
+    background:#0a1030;
+    color:#4af;
+    border:2px solid #4af;
+    padding:8px 10px;
+    cursor:pointer;
+    z-index:20;
+    touch-action:manipulation;
+  `;
+  btn.addEventListener('touchstart', e => { e.preventDefault(); action(); });
+  btn.addEventListener('mousedown', action);
+  document.getElementById('gameWrapper').appendChild(btn);
+}
+
+// ── Game logic ───────────────────────────────────────────
+function startGame() {
+  score = 0; combo = 1; maxCombo = 1;
+  timeLeft = 60; gameTimer = 0;
+  level = 1;
+  sk.x = 120; sk.y = 200; sk.vx = 0; sk.vy = 0;
+  sk.trail = []; sk.sparkles = []; popups = [];
+  sk.jumping = false; sk.spinning = false; sk.posing = false;
+  sk.grounded = true; sk.jumpT = 0; sk.spinT = 0; sk.poseT = 0;
+  moveQueue = [];
+  state = 'playing';
+  updateHUD();
+}
+
+function triggerJump() {
+  sk.jumping = true; sk.grounded = false; sk.jumpT = 0;
+  moveQueue.push('jump');
+  setTimeout(() => {
+    sk.jumping = false; sk.grounded = true;
+    checkMoveCombo();
+  }, 600);
+}
+function triggerSpin() {
+  sk.spinning = true; sk.spinT = 0;
+  moveQueue.push('spin');
+  setTimeout(() => { sk.spinning = false; checkMoveCombo(); }, 500);
+}
+function triggerPose() {
+  sk.posing = true; sk.poseT = 0;
+  moveQueue.push('pose');
+  addSparkles(sk.x, sk.y - 20, 8);
+  setTimeout(() => { sk.posing = false; checkMoveCombo(); }, 700);
+}
+
+function checkMoveCombo() {
+  const q = moveQueue.join('+');
+  let matched = null;
+  for (const m of MOVES) {
+    if (q.includes(m.key)) { matched = m; break; }
+  }
+  if (!matched && moveQueue.length >= 1) {
+    // find single-key match
+    for (const m of MOVES) {
+      if (moveQueue.includes(m.key)) { matched = m; break; }
+    }
+  }
+  if (matched) {
+    const pts = matched.pts * combo;
+    score += pts;
+    popups.push({ x: sk.x, y: sk.y - 30, text: matched.name, pts, color: matched.color, age: 0 });
+    addSparkles(sk.x, sk.y - 20, 12);
+    combo = Math.min(combo + 1, 8);
+    maxCombo = Math.max(maxCombo, combo);
+    waveCrowd();
+    moveQueue = [];
+  }
+  // auto-clear stale queue
+  if (moveQueue.length > 3) moveQueue = [];
+  updateHUD();
+}
+
+function waveCrowd() {
+  crowd.forEach(p => {
+    p.waving = true;
+    p.wave = 0;
+    setTimeout(() => p.waving = false, 1500);
+  });
+}
+
+function addSparkles(x, y, n) {
+  for (let i = 0; i < n; i++) {
+    const angle = Math.random() * Math.PI * 2;
+    const spd = 0.5 + Math.random() * 2;
+    sk.sparkles.push({
+      x, y,
+      vx: Math.cos(angle) * spd,
+      vy: Math.sin(angle) * spd,
+      age: 0,
+      life: 0.6 + Math.random() * 0.6,
+      color: ['#fff','#ffd700','#4af','#f9f'][Math.floor(Math.random()*4)],
+    });
+  }
+}
+
+function updateHUD() {
+  document.getElementById('scoreDisplay').textContent = score;
+  document.getElementById('comboDisplay').textContent = 'x' + combo;
+  document.getElementById('timeDisplay').textContent = Math.ceil(timeLeft);
+  document.getElementById('levelDisplay').textContent = level;
+}
+
+// ── Update ───────────────────────────────────────────────
+function update(dt) {
+  if (state !== 'playing') return;
+
+  // Timer
+  gameTimer += dt;
+  timeLeft -= dt;
+  if (timeLeft <= 0) { timeLeft = 0; state = 'gameover'; updateHUD(); return; }
+
+  // Level up every 20s
+  level = Math.floor((60 - timeLeft) / 20) + 1;
+
+  // Combo decay
+  if (gameTimer % 1 < dt && combo > 1) {
+    // small decay encouragement — not punished yet
+  }
+
+  // Skater movement
+  sk.x += sk.vx;
+  sk.x = Math.max(18, Math.min(222, sk.x));
+
+  // Friction
+  sk.vx *= 0.97;
+
+  // Jump arc
+  if (sk.jumping) {
+    sk.jumpT = Math.min(sk.jumpT + dt / 0.6, 1);
+    sk.jumpHeight = Math.sin(sk.jumpT * Math.PI) * 28;
+  } else {
+    sk.jumpHeight = 0;
+  }
+
+  // Spin
+  if (sk.spinning) sk.spinT = Math.min(sk.spinT + dt / 0.5, 1);
+
+  // Pose
+  if (sk.posing) sk.poseT = Math.min(sk.poseT + dt / 0.7, 1);
+
+  // Walk frame
+  sk.frameT += dt * (Math.abs(sk.vx) * 3 + 2);
+  sk.frame = Math.floor(sk.frameT * 4) % 4;
+
+  // Trail
+  if (Math.abs(sk.vx) > 0.1 || sk.jumping) {
+    sk.trail.push({ x: sk.x, y: sk.y + (sk.posing ? -4 : 0), age: 0 });
+  }
+  sk.trail.forEach(t => t.age += dt);
+  sk.trail = sk.trail.filter(t => t.age < 0.9);
+
+  // Sparkles
+  sk.sparkles.forEach(s => {
+    s.x += s.vx; s.y += s.vy;
+    s.vy += 0.04;
+    s.age += dt;
+  });
+  sk.sparkles = sk.sparkles.filter(s => s.age < s.life);
+
+  // Popups
+  popups.forEach(p => { p.age += dt; p.y -= dt * 18; });
+  popups = popups.filter(p => p.age < 1.5);
+
+  // Crowd wave animation
+  crowd.forEach(p => { if (p.waving) p.wave += dt * 6; });
+
+  updateHUD();
+}
+
+// ── Draw helpers ─────────────────────────────────────────
+function px(n) { return Math.round(n); }
+
+function drawPixelRect(x, y, w, h, color) {
+  ctx.fillStyle = color;
+  ctx.fillRect(px(x), px(y), w, h);
+}
+
+function drawRink() {
+  // Ice gradient
+  const g = ctx.createLinearGradient(0, 80, 0, 280);
+  g.addColorStop(0, '#b8e8f8');
+  g.addColorStop(0.5, '#d6f3ff');
+  g.addColorStop(1, '#a8d8ec');
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 80, W, 220);
+
+  // Rink border
+  ctx.strokeStyle = '#7bb8d4';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(8, 82, W - 16, 216);
+
+  // Center circle
+  ctx.strokeStyle = 'rgba(100,170,210,0.5)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.arc(120, 190, 42, 0, Math.PI * 2);
+  ctx.stroke();
+
+  // Center cross
+  ctx.strokeStyle = 'rgba(100,170,210,0.35)';
+  ctx.beginPath();
+  ctx.moveTo(20, 190); ctx.lineTo(220, 190);
+  ctx.moveTo(120, 100); ctx.lineTo(120, 280);
+  ctx.stroke();
+
+  // Red center dot
+  ctx.fillStyle = '#e03050';
+  ctx.fillRect(118, 188, 4, 4);
+
+  // Ice texture lines (subtle)
+  ctx.strokeStyle = 'rgba(150,200,230,0.15)';
+  ctx.lineWidth = 1;
+  for (let i = 0; i < 8; i++) {
+    const yy = 100 + i * 24;
+    ctx.beginPath();
+    ctx.moveTo(10, yy); ctx.lineTo(230, yy);
+    ctx.stroke();
+  }
+}
+
+function drawCrowd() {
+  // Bleacher backdrop
+  const rows = [
+    { y: 0,  h: 28, color: '#1a1a3a' },
+    { y: 28, h: 24, color: '#151530' },
+    { y: 52, h: 22, color: '#101028' },
+  ];
+  rows.forEach(r => drawPixelRect(0, r.y, W, r.h, r.color));
+
+  // Crowd figures
+  crowd.forEach(p => {
+    const baseY = [16, 36, 56][p.row];
+    const wave = p.waving ? Math.sin(p.wave) * 4 : Math.sin(p.wave * 0.3) * 1;
+    const bodyY = baseY - wave;
+
+    // Body
+    ctx.fillStyle = p.color;
+    ctx.fillRect(p.x, bodyY, 6, 8);
+    // Head
+    ctx.fillStyle = '#f4c77c';
+    ctx.fillRect(p.x + 1, bodyY - 5, 4, 4);
+    // Arm raised when waving
+    if (p.waving && Math.sin(p.wave) > 0) {
+      ctx.fillStyle = p.color;
+      ctx.fillRect(p.x - 2, bodyY, 2, 4);
+      ctx.fillRect(p.x + 6, bodyY, 2, 4);
+    }
+  });
+
+  // Rink wall
+  drawPixelRect(0, 78, W, 6, '#2a4a6a');
+  drawPixelRect(0, 78, W, 2, '#4a8aaa');
+}
+
+function drawTrail() {
+  sk.trail.forEach(t => {
+    const a = 1 - t.age / 0.9;
+    ctx.fillStyle = `rgba(180,230,255,${a * 0.5})`;
+    ctx.fillRect(px(t.x - 3), px(t.y), 6, 2);
+  });
+}
+
+function drawSparkles() {
+  sk.sparkles.forEach(s => {
+    const a = 1 - s.age / s.life;
+    ctx.fillStyle = s.color;
+    ctx.globalAlpha = a;
+    if (a > 0.5) {
+      ctx.fillRect(px(s.x), px(s.y), 2, 2);
+    } else {
+      ctx.fillRect(px(s.x), px(s.y), 1, 1);
+    }
+  });
+  ctx.globalAlpha = 1;
+}
+
+function drawSkater() {
+  const x = px(sk.x);
+  const baseY = px(sk.y);
+  const jh = px(sk.jumpHeight);
+  const y = baseY - jh;
+  const f = sk.facing;
+  const spinning = sk.spinning;
+  const posing = sk.posing;
+
+  // Shadow
+  if (jh > 0) {
+    ctx.fillStyle = C.shadow;
+    ctx.fillRect(x - 6, baseY - 1, 12, 3);
+  }
+
+  // --- Pixel skater ---
+  // We draw a simple but charming 12x20 pixel figure
+
+  if (spinning) {
+    // Spinning: tight vertical form
+    const spin = Math.sin(sk.spinT * Math.PI * 6) * 3;
+    // Body compressed
+    ctx.fillStyle = C.skaterCoat;
+    ctx.fillRect(x - 3, y - 14, 6, 10);
+    ctx.fillStyle = C.skaterBody;
+    ctx.fillRect(x - 2, y - 18, 4, 5);
+    // Blur effect
+    ctx.fillStyle = 'rgba(255,255,255,0.3)';
+    ctx.fillRect(x - 4 + spin, y - 18, 8, 16);
+    // Sparkle burst
+    if (sk.spinT < 0.3) addSparkles(x, y - 10, 2);
+  } else if (posing) {
+    // Arabesque / pose: leg extended
+    const pt = sk.poseT;
+    ctx.fillStyle = C.skaterPants;
+    // Extended leg
+    ctx.fillRect(x + f * 2, y - 4, f * 10, 2);
+    // Standing leg
+    ctx.fillRect(x - 2, y - 10, 4, 10);
+    ctx.fillStyle = C.skaterCoat;
+    ctx.fillRect(x - 3, y - 20, 6, 10);
+    // Arms out
+    ctx.fillRect(x - 8, y - 18, 5, 2);
+    ctx.fillRect(x + 3, y - 18, 5, 2);
+    ctx.fillStyle = C.skaterBody;
+    ctx.fillRect(x - 2, y - 24, 4, 5);
+    // Boots
+    ctx.fillStyle = C.skaterBoot;
+    ctx.fillRect(x - 3, y - 2, 4, 2);
+  } else {
+    // Normal skate
+    const legSwing = Math.sin(sk.frame / 4 * Math.PI * 2) * 2;
+    // Skirt / pants
+    ctx.fillStyle = C.skaterPants;
+    ctx.fillRect(x - 3, y - 8, 6, 8);
+    // Legs alternate
+    ctx.fillRect(x - 3 + legSwing, y - 2, 3, 4);
+    ctx.fillRect(x + legSwing, y - 2, 3, 4);
+    // Body
+    ctx.fillStyle = C.skaterCoat;
+    ctx.fillRect(x - 3, y - 18, 6, 10);
+    // Arms
+    ctx.fillStyle = C.skaterCoat;
+    if (sk.jumping) {
+      ctx.fillRect(x - 7, y - 20, 4, 2);
+      ctx.fillRect(x + 3, y - 20, 4, 2);
+    } else {
+      ctx.fillRect(x - 6, y - 16 + legSwing, 3, 2);
+      ctx.fillRect(x + 3, y - 16 - legSwing, 3, 2);
+    }
+    // Head
+    ctx.fillStyle = C.skaterBody;
+    ctx.fillRect(x - 2, y - 24, 4, 5);
+    // Hair
+    ctx.fillStyle = '#7a3a1a';
+    ctx.fillRect(x - 2, y - 26, 4, 3);
+    // Boots
+    ctx.fillStyle = C.skaterBoot;
+    ctx.fillRect(x - 4 + legSwing, y + 2, 4, 2);
+    ctx.fillRect(x + legSwing, y + 2, 4, 2);
+    // Blade glint
+    ctx.fillStyle = 'rgba(220,240,255,0.9)';
+    ctx.fillRect(x - 4 + legSwing, y + 4, 5, 1);
+    ctx.fillRect(x + legSwing, y + 4, 5, 1);
+  }
+}
+
+function drawPopups() {
+  popups.forEach(p => {
+    const a = Math.max(0, 1 - p.age / 1.5);
+    ctx.globalAlpha = a;
+    ctx.fillStyle = p.color;
+    ctx.font = '6px "Press Start 2P"';
+    ctx.textAlign = 'center';
+    ctx.fillText(p.text, px(p.x), px(p.y));
+    ctx.fillStyle = '#fff';
+    ctx.font = '5px "Press Start 2P"';
+    ctx.fillText('+' + p.pts, px(p.x), px(p.y + 8));
+  });
+  ctx.globalAlpha = 1;
+  ctx.textAlign = 'left';
+}
+
+function drawTitle() {
+  // Background rink (dimmed)
+  drawRink();
+  ctx.fillStyle = 'rgba(0,5,20,0.78)';
+  ctx.fillRect(0, 0, W, H);
+
+  // Title box
+  ctx.fillStyle = '#0a0a2a';
+  ctx.fillRect(14, 60, 212, 100);
+  ctx.strokeStyle = '#4aaeff';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(14, 60, 212, 100);
+  ctx.strokeStyle = '#88ccff';
+  ctx.lineWidth = 1;
+  ctx.strokeRect(18, 64, 204, 92);
+
+  // Logo text
+  ctx.fillStyle = '#4aaeff';
+  ctx.font = '18px "Press Start 2P"';
+  ctx.textAlign = 'center';
+  ctx.fillText('FIGURE', 120, 100);
+  ctx.fillStyle = '#ffffff';
+  ctx.fillText('ICE', 120, 122);
+
+  // Subtitle
+  ctx.fillStyle = '#88aacc';
+  ctx.font = '5px "Press Start 2P"';
+  ctx.fillText('A RETRO SKATING GAME', 120, 140);
+
+  // Blinking press start
+  if (Math.floor(Date.now() / 500) % 2 === 0) {
+    ctx.fillStyle = '#ffd700';
+    ctx.font = '7px "Press Start 2P"';
+    ctx.fillText('PRESS ENTER', 120, 200);
+  }
+
+  // Controls hint
+  ctx.fillStyle = '#4a6a8a';
+  ctx.font = '5px "Press Start 2P"';
+  ctx.fillText('Z=JUMP  X=SPIN  SPC=POSE', 120, 230);
+  ctx.fillText('← → TO SKATE', 120, 244);
+
+  // Decorative stars
+  ['*','*','❄','*','*'].forEach((s, i) => {
+    ctx.fillStyle = i === 2 ? '#88ddff' : '#ffd700';
+    ctx.font = i === 2 ? '8px serif' : '6px "Press Start 2P"';
+    ctx.fillText(s, 30 + i * 45, 175);
+  });
+
+  ctx.textAlign = 'left';
+}
+
+function drawGameOver() {
+  drawRink();
+  drawCrowd();
+  ctx.fillStyle = 'rgba(0,5,20,0.82)';
+  ctx.fillRect(0, 0, W, H);
+
+  ctx.fillStyle = '#0a0a2a';
+  ctx.fillRect(14, 55, 212, 180);
+  ctx.strokeStyle = '#4aaeff';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(14, 55, 212, 180);
+
+  ctx.fillStyle = '#e03050';
+  ctx.font = '12px "Press Start 2P"';
+  ctx.textAlign = 'center';
+  ctx.fillText('GAME OVER', 120, 90);
+
+  ctx.fillStyle = '#4aaeff';
+  ctx.font = '6px "Press Start 2P"';
+  ctx.fillText('FINAL SCORE', 120, 115);
+  ctx.fillStyle = '#ffd700';
+  ctx.font = '14px "Press Start 2P"';
+  ctx.fillText(score, 120, 135);
+
+  ctx.fillStyle = '#88aacc';
+  ctx.font = '5px "Press Start 2P"';
+  ctx.fillText('MAX COMBO', 120, 158);
+  ctx.fillStyle = '#ff88cc';
+  ctx.font = '10px "Press Start 2P"';
+  ctx.fillText('x' + maxCombo, 120, 173);
+
+  // Grade
+  const grade = score >= 10000 ? 'S' : score >= 6000 ? 'A' : score >= 3000 ? 'B' : score >= 1000 ? 'C' : 'D';
+  const gradeColors = { S:'#ffd700', A:'#80ff80', B:'#80c0ff', C:'#ffcc44', D:'#ff8080' };
+  ctx.fillStyle = gradeColors[grade];
+  ctx.font = '22px "Press Start 2P"';
+  ctx.fillText(grade, 120, 210);
+
+  if (Math.floor(Date.now() / 500) % 2 === 0) {
+    ctx.fillStyle = '#ffd700';
+    ctx.font = '6px "Press Start 2P"';
+    ctx.fillText('PRESS ENTER', 120, 230);
+  }
+
+  ctx.textAlign = 'left';
+}
+
+// ── Main loop ────────────────────────────────────────────
+function frame(ts) {
+  const dt = Math.min((ts - lastTime) / 1000, 0.05);
+  lastTime = ts;
+
+  update(dt);
+
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = C.bg;
+  ctx.fillRect(0, 0, W, H);
+
+  if (state === 'title') {
+    drawTitle();
+  } else if (state === 'gameover') {
+    drawGameOver();
+  } else {
+    // Playing
+    drawCrowd();
+    drawRink();
+    drawTrail();
+    drawSkater();
+    drawSparkles();
+    drawPopups();
+
+    // Timer flash
+    if (timeLeft <= 10 && Math.floor(Date.now() / 250) % 2 === 0) {
+      ctx.fillStyle = 'rgba(200,30,50,0.12)';
+      ctx.fillRect(0, 0, W, H);
+    }
+  }
+
+  requestAnimationFrame(frame);
+}
+
+// Add mobile touch buttons
+const btnStyle = 'position:absolute;bottom:30px;font-family:"Press Start 2P",monospace;font-size:8px;background:#0a1030;color:#4af;border:2px solid #4af;padding:8px 10px;cursor:pointer;z-index:20;touch-action:manipulation;user-select:none;';
+
+const btnLeft = document.createElement('button');
+btnLeft.textContent = '◀';
+btnLeft.style.cssText = btnStyle + 'left:10px;';
+let lInterval;
+btnLeft.addEventListener('touchstart', e => { e.preventDefault(); lInterval = setInterval(() => { sk.vx = -1.2; sk.facing = -1; }, 16); });
+btnLeft.addEventListener('touchend', () => { clearInterval(lInterval); sk.vx *= 0.3; });
+btnLeft.addEventListener('mousedown', e => { e.preventDefault(); lInterval = setInterval(() => { sk.vx = -1.2; sk.facing = -1; }, 16); });
+btnLeft.addEventListener('mouseup', () => { clearInterval(lInterval); sk.vx *= 0.3; });
+document.getElementById('gameWrapper').appendChild(btnLeft);
+
+const btnRight = document.createElement('button');
+btnRight.textContent = '▶';
+btnRight.style.cssText = btnStyle + 'left:50px;';
+let rInterval;
+btnRight.addEventListener('touchstart', e => { e.preventDefault(); rInterval = setInterval(() => { sk.vx = 1.2; sk.facing = 1; }, 16); });
+btnRight.addEventListener('touchend', () => { clearInterval(rInterval); sk.vx *= 0.3; });
+btnRight.addEventListener('mousedown', e => { e.preventDefault(); rInterval = setInterval(() => { sk.vx = 1.2; sk.facing = 1; }, 16); });
+btnRight.addEventListener('mouseup', () => { clearInterval(rInterval); sk.vx *= 0.3; });
+document.getElementById('gameWrapper').appendChild(btnRight);
+
+const btnJump = document.createElement('button');
+btnJump.textContent = 'Z';
+btnJump.style.cssText = btnStyle + 'right:80px;';
+btnJump.addEventListener('touchstart', e => { e.preventDefault(); if (sk.grounded && !sk.jumping && state==='playing') triggerJump(); });
+btnJump.addEventListener('mousedown', e => { e.preventDefault(); if (sk.grounded && !sk.jumping && state==='playing') triggerJump(); });
+document.getElementById('gameWrapper').appendChild(btnJump);
+
+const btnSpin = document.createElement('button');
+btnSpin.textContent = 'X';
+btnSpin.style.cssText = btnStyle + 'right:40px;';
+btnSpin.addEventListener('touchstart', e => { e.preventDefault(); if (!sk.spinning && state==='playing') triggerSpin(); });
+btnSpin.addEventListener('mousedown', e => { e.preventDefault(); if (!sk.spinning && state==='playing') triggerSpin(); });
+document.getElementById('gameWrapper').appendChild(btnSpin);
+
+const btnPose = document.createElement('button');
+btnPose.textContent = '★';
+btnPose.style.cssText = btnStyle + 'right:0px;';
+btnPose.addEventListener('touchstart', e => { e.preventDefault(); if (sk.grounded && !sk.posing && state==='playing') triggerPose(); });
+btnPose.addEventListener('mousedown', e => { e.preventDefault(); if (sk.grounded && !sk.posing && state==='playing') triggerPose(); });
+document.getElementById('gameWrapper').appendChild(btnPose);
+
+requestAnimationFrame(ts => { lastTime = ts; requestAnimationFrame(frame); });
+</script>
+</body>
+</html>
