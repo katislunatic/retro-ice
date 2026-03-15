@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Retro Ice – Skate!</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+html, body { overflow:hidden; background:#08111e; }
+
+.game-page {
+  position:relative;
+  width:100vw;
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+}
+
+/* HUD top bar */
+#hud {
+  flex:0 0 auto;
+  height:40px;
+  background:#08111e;
+  border-bottom:3px solid #4ac8f0;
+  display:flex;
+  align-items:center;
+  padding:0 14px;
+  gap:clamp(8px,2vw,24px);
+  z-index:20;
+}
+.hud-block { display:flex;flex-direction:column;gap:1px; }
+.hud-label { font-size:clamp(4px,0.7vw,5px); color:#4ac8f0; letter-spacing:1px; }
+.hud-val   { font-size:clamp(8px,1.3vw,11px); color:#fff; }
+.hud-sep   { flex:1; }
+.hud-name  { font-size:clamp(5px,0.9vw,7px); color:#aabbcc; letter-spacing:1px; }
+
+.hud-combo-val { color:#ffd700!important; }
+.hud-time-val  { color:#ff8080!important; }
+
+/* Canvas fills remaining space */
+#gameCanvas {
+  flex:1 1 auto;
+  width:100%;
+  height:calc(100vh - 40px - 32px);
+  display:block;
+  image-rendering:pixelated;
+}
+
+/* Controls hint bar bottom */
+#ctrlBar {
+  flex:0 0 auto;
+  height:32px;
+  background:#08111e;
+  border-top:2px solid rgba(74,200,240,0.3);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:clamp(6px,1.5vw,20px);
+  padding:0 12px;
+}
+.ctrl-hint { font-size:clamp(4px,0.7vw,6px); color:#556677; }
+.ctrl-hint span { color:#ffd700; }
+
+/* Menu overlay (Escape) */
+#menuOverlay {
+  display:none;
+  position:fixed;inset:0;
+  background:rgba(0,0,0,0.75);
+  z-index:50;
+  align-items:center;
+  justify-content:center;
+}
+#menuOverlay.show { display:flex; }
+#menuBox {
+  text-align:center;
+  padding:30px 36px;
+  min-width:240px;
+}
+#menuBox h3 { font-size:clamp(9px,1.5vw,12px);color:#fff;margin-bottom:20px; }
+.menu-choices { display:flex;flex-direction:column;gap:10px; }
+</style>
+</head>
+<body>
+
+<div class="game-page">
+  <!-- HUD -->
+  <div id="hud">
+    <div class="hud-block">
+      <div class="hud-label">SKATER</div>
+      <div class="hud-val hud-name" id="hudName">—</div>
+    </div>
+    <div class="hud-sep"></div>
+    <div class="hud-block">
+      <div class="hud-label">SCORE</div>
+      <div class="hud-val" id="hudScore">0</div>
+    </div>
+    <div class="hud-block">
+      <div class="hud-label">COMBO</div>
+      <div class="hud-val hud-combo-val" id="hudCombo">x1</div>
+    </div>
+    <div class="hud-block">
+      <div class="hud-label">TIME</div>
+      <div class="hud-val hud-time-val" id="hudTime">90</div>
+    </div>
+    <div class="hud-block">
+      <div class="hud-label">LEVEL</div>
+      <div class="hud-val" id="hudLevel">1</div>
+    </div>
+    <div class="hud-sep"></div>
+    <button class="btn btn-sm" onclick="toggleMenu()" style="height:26px;padding:0 10px;font-size:6px">
+      ☰ MENU
+    </button>
+  </div>
+
+  <!-- Game canvas -->
+  <canvas id="gameCanvas"></canvas>
+
+  <!-- Controls bar -->
+  <div id="ctrlBar">
+    <span class="ctrl-hint"><span>← →</span> SKATE</span>
+    <span class="ctrl-hint"><span>Z</span> JUMP</span>
+    <span class="ctrl-hint"><span>X</span> SPIN</span>
+    <span class="ctrl-hint"><span>SPACE</span> POSE</span>
+    <span class="ctrl-hint"><span>ESC</span> MENU</span>
+    <span class="ctrl-hint" style="color:#4ac8f0">CHAIN MOVES FOR COMBOS!</span>
+  </div>
+</div>
+
+<!-- Pause / Menu overlay -->
+<div id="menuOverlay">
+  <div class="panel" id="menuBox">
+    <h3>PAUSED</h3>
+    <div class="menu-choices">
+      <button class="btn btn-lg" onclick="toggleMenu()">▶ RESUME</button>
+      <button class="btn" onclick="location.href='career.html'">⬅ CAREER</button>
+      <button class="btn" onclick="location.href='index.html'">🏠 TITLE</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/save.js"></script>
+<script src="js/game.js"></script>
+<script>
+let menuOpen = false;
+function toggleMenu(){
+  menuOpen = !menuOpen;
+  document.getElementById('menuOverlay').classList.toggle('show', menuOpen);
+}
+document.addEventListener('keydown', e=>{
+  if(e.code==='Escape') toggleMenu();
+});
+</script>
+</body>
+</html>

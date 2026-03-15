@@ -1,0 +1,324 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+:root {
+  --ice-blue: #4ac8f0;
+  --ice-dark: #1a3a5c;
+  --ice-mid:  #2a5a8c;
+  --ice-light:#8de0f8;
+  --ice-white:#e8f8ff;
+  --rink-bg:  #c8eef8;
+  --btn-main: #2a7abf;
+  --btn-dark: #1a4a7c;
+  --btn-highlight: #5aaee8;
+  --text-white: #ffffff;
+  --text-gold:  #ffd700;
+  --text-acc:   #4ac8f0;
+  --panel-bg:   rgba(10,20,40,0.88);
+  --border-col: #4ac8f0;
+  --red-star:   #e03050;
+  --blue-star:  #4060c0;
+  --silver:     #c0d0e0;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; image-rendering:pixelated; }
+
+html, body {
+  width:100%; height:100%;
+  background:#0a1020;
+  font-family:'Press Start 2P', monospace;
+  overflow:hidden;
+  cursor:default;
+}
+
+/* ── Pixel background dots ── */
+body::before {
+  content:'';
+  position:fixed; inset:0;
+  background-image: radial-gradient(circle, rgba(74,200,240,0.06) 1px, transparent 1px);
+  background-size:16px 16px;
+  pointer-events:none;
+  z-index:0;
+}
+
+/* ── Full-screen page wrapper ── */
+.page {
+  position:relative;
+  width:100vw; height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  z-index:1;
+}
+
+/* ── Landscape rink background ── */
+.rink-bg {
+  position:fixed; inset:0;
+  background: linear-gradient(180deg,
+    #0a1428 0%,
+    #0e1e3a 18%,
+    #1a3a5c 30%,
+    #c8eef8 30%,
+    #daf4ff 52%,
+    #b8e4f4 100%
+  );
+  z-index:-1;
+}
+.rink-bg::after {
+  content:'';
+  position:absolute;
+  left:0; right:0;
+  top:30%;
+  height:70%;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0px,
+      transparent 78px,
+      rgba(150,210,240,0.12) 78px,
+      rgba(150,210,240,0.12) 80px
+    );
+}
+
+/* ── Stars header ── */
+.stars-header {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:16px;
+  font-size:10px;
+}
+.star-r { color: var(--red-star); }
+.star-w { color: #ffffff; }
+.star-b { color: var(--blue-star); }
+.stars-header h1 {
+  font-size:clamp(10px, 2vw, 16px);
+  color:#fff;
+  letter-spacing:3px;
+  text-shadow: 2px 2px 0 var(--ice-dark);
+}
+
+/* ── Panel / card ── */
+.panel {
+  background: var(--panel-bg);
+  border: 3px solid var(--border-col);
+  box-shadow: 0 0 0 2px #0a1020, 0 0 0 4px var(--border-col), 4px 4px 0 rgba(0,0,0,0.5);
+  padding:20px 24px;
+  position:relative;
+}
+.panel::before {
+  content:'';
+  position:absolute;
+  inset:3px;
+  border:1px solid rgba(74,200,240,0.25);
+  pointer-events:none;
+}
+
+/* ── Buttons ── */
+.btn {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  background: var(--btn-main);
+  color: #fff;
+  border: 3px solid var(--btn-highlight);
+  box-shadow: 0 4px 0 var(--btn-dark), 2px 2px 0 rgba(0,0,0,0.4);
+  padding:10px 18px;
+  font-family:'Press Start 2P', monospace;
+  font-size:clamp(7px,1.2vw,10px);
+  cursor:pointer;
+  transition: transform 0.06s, box-shadow 0.06s;
+  text-decoration:none;
+  text-align:center;
+  letter-spacing:1px;
+  line-height:1.4;
+  white-space:nowrap;
+}
+.btn:hover  { background: var(--btn-highlight); }
+.btn:active { transform:translateY(3px); box-shadow:0 1px 0 var(--btn-dark); }
+
+.btn-gold {
+  background:#9a7000;
+  border-color: var(--text-gold);
+  box-shadow: 0 4px 0 #5a4000;
+  color: var(--text-gold);
+}
+.btn-gold:hover { background:#c09020; }
+
+.btn-danger {
+  background:#7a1030;
+  border-color:#e03050;
+  box-shadow:0 4px 0 #3a0010;
+  color:#ff6080;
+}
+.btn-danger:hover { background:#a01840; }
+
+.btn-sm { font-size:clamp(6px,1vw,8px); padding:7px 12px; }
+.btn-lg { font-size:clamp(9px,1.5vw,13px); padding:13px 28px; }
+.btn-sq { width:42px; height:42px; padding:0; font-size:12px; }
+
+/* ── Field label/input ── */
+.field-label {
+  font-size:clamp(6px,1vw,8px);
+  color: var(--text-acc);
+  letter-spacing:1px;
+  margin-bottom:5px;
+}
+.field-wrap { margin-bottom:14px; }
+
+input[type=text] {
+  background:rgba(255,255,255,0.92);
+  border:3px solid var(--border-col);
+  color:#0a1428;
+  font-family:'Press Start 2P', monospace;
+  font-size:clamp(7px,1.1vw,9px);
+  padding:8px 10px;
+  width:100%;
+  outline:none;
+  box-shadow:inset 2px 2px 0 rgba(0,0,0,0.15);
+}
+input[type=text]:focus { border-color:var(--text-gold); }
+
+/* ── Toggle pair ── */
+.toggle-pair { display:flex; gap:8px; }
+.toggle-pair .btn { flex:1; }
+.toggle-pair .btn.active {
+  background: #1a6a2a;
+  border-color:#40e060;
+  box-shadow: 0 4px 0 #0a3a10;
+  color:#80ff90;
+}
+
+/* ── Skater canvas preview ── */
+#skaterPreview {
+  display:block;
+  margin:0 auto;
+  image-rendering:pixelated;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width:6px; }
+::-webkit-scrollbar-track { background:#0a1020; }
+::-webkit-scrollbar-thumb { background:var(--btn-main); }
+
+/* ── Slot entry ── */
+.slot-entry {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:14px;
+}
+.slot-label {
+  font-size:clamp(5px,0.8vw,7px);
+  color:var(--text-acc);
+  letter-spacing:1px;
+  text-align:center;
+  margin-bottom:4px;
+}
+.slot-btn {
+  flex:1;
+  min-width:0;
+}
+.slot-btn .skater-name { font-size:clamp(8px,1.3vw,11px); color:#fff; }
+.slot-btn .skater-sub  { font-size:clamp(5px,0.8vw,7px); color:var(--ice-light); margin-top:4px; }
+
+/* ── Nation flag text ── */
+.nation-display {
+  display:flex; align-items:center; gap:8px;
+}
+
+/* ── Swatch grid ── */
+.swatch-grid {
+  display:flex; flex-wrap:wrap; gap:5px;
+}
+.swatch {
+  width:24px; height:24px;
+  border:2px solid transparent;
+  cursor:pointer;
+  transition:border-color 0.1s;
+}
+.swatch.active { border-color:#fff; box-shadow:0 0 0 2px var(--text-gold); }
+
+/* ── Section title ── */
+.section-title {
+  font-size:clamp(5px,0.85vw,7px);
+  color:var(--text-acc);
+  letter-spacing:2px;
+  text-align:center;
+  border-top: 1px solid rgba(74,200,240,0.3);
+  border-bottom: 1px solid rgba(74,200,240,0.3);
+  padding:5px 0;
+  margin-bottom:12px;
+}
+
+/* ── Animations ── */
+@keyframes blink { 0%,49%{opacity:1} 50%,100%{opacity:0} }
+.blink { animation: blink 0.9s infinite; }
+
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(16px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+.fadeup { animation: fadeUp 0.35s ease both; }
+
+@keyframes pulse {
+  0%,100%{transform:scale(1)} 50%{transform:scale(1.04)}
+}
+.pulse { animation:pulse 2s ease infinite; }
+
+/* ── Crowd bleacher ── */
+.crowd-bar {
+  position:absolute;
+  top:0; left:0; right:0;
+  height:28%;
+  overflow:hidden;
+  z-index:0;
+}
+
+/* ── HUD bar (game screen) ── */
+#hud {
+  position:absolute;
+  top:0; left:0; right:0;
+  height:48px;
+  background:rgba(8,14,30,0.92);
+  border-bottom:3px solid var(--border-col);
+  display:flex;
+  align-items:center;
+  padding:0 16px;
+  gap:20px;
+  z-index:20;
+}
+#hud .hud-block {
+  display:flex; flex-direction:column; gap:2px;
+}
+#hud .hud-label { font-size:5px; color:var(--text-acc); letter-spacing:1px; }
+#hud .hud-val   { font-size:clamp(8px,1.4vw,11px); color:#fff; }
+#hud .hud-sep   { flex:1; }
+
+/* ── Game canvas ── */
+#gameCanvas {
+  position:absolute;
+  top:48px; left:0; right:0;
+  width:100%; height:calc(100% - 48px - 36px);
+  image-rendering:pixelated;
+}
+
+/* ── Bottom control bar ── */
+#controls {
+  position:absolute;
+  bottom:0; left:0; right:0;
+  height:36px;
+  background:rgba(8,14,30,0.92);
+  border-top:3px solid var(--border-col);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:12px;
+  z-index:20;
+}
+#controls .ctrl-hint {
+  font-size:5px;
+  color:var(--silver);
+}
+#controls .ctrl-hint span { color:var(--text-gold); }
