@@ -7,219 +7,167 @@
 <link rel="stylesheet" href="css/style.css">
 <style>
 body { background: #0a0a0a; overflow: hidden; }
-
-/* Stars dots subtly over black, like Retro Bowl */
-.bg-deco {
-  position: fixed; inset: 0; z-index: 0;
-  background-image: radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px);
-  background-size: 14px 14px;
-  pointer-events: none;
+.bg-dots {
+  position:fixed;inset:0;z-index:0;
+  background-image:radial-gradient(circle,rgba(255,255,255,0.035) 1px,transparent 1px);
+  background-size:14px 14px; pointer-events:none;
 }
 
+/* ── Perfectly centered layout ── */
 .career-page {
-  position: relative; z-index: 1;
-  width: 100vw; height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: clamp(16px, 3vw, 48px);
-  padding: 24px;
+  position:relative;z-index:1;
+  width:100vw;height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:clamp(20px,3.5vw,52px);
+  padding:24px;
 }
 
-/* Small logo on left */
+/* Small logo */
 .logo-sm {
-  flex: 0 0 auto;
-  width: clamp(100px, 13vw, 160px);
-  filter: drop-shadow(0 0 12px rgba(100,180,255,0.3));
+  flex:0 0 auto;
+  width:clamp(110px,14vw,170px);
+  filter:drop-shadow(0 0 14px rgba(100,180,255,0.28));
 }
-.logo-sm svg { width: 100%; height: auto; }
+.logo-sm svg { width:100%;height:auto; }
 
-/* Right: panel with slots — EXACTLY Retro Bowl style */
+/* Slots panel */
 .slots-panel {
-  flex: 1;
-  max-width: 520px;
-  min-width: 260px;
+  flex:1;max-width:540px;min-width:270px;
 }
 
-/* Header exactly like Retro Bowl: ★ ★ ★ TITLE ★ ★ ★ */
-.panel-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: clamp(12px, 2vh, 20px);
-  gap: 10px;
+/* Stars header — exact Retro Bowl style */
+.panel-hdr {
+  display:flex;align-items:center;
+  justify-content:space-between;
+  margin-bottom:clamp(12px,2vh,22px);
 }
-.panel-header .back { flex-shrink: 0; }
-.panel-header .stars-title {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  font-size: clamp(9px, 1.5vw, 13px);
-  color: #fff;
-  letter-spacing: 3px;
-  text-shadow: 2px 2px 0 rgba(0,0,0,0.8);
+.panel-hdr .stars-title {
+  flex:1;display:flex;align-items:center;
+  justify-content:center;gap:9px;
+  font-size:clamp(9px,1.5vw,13px);
+  color:#fff;letter-spacing:3px;
+  text-shadow:2px 2px 0 rgba(0,0,0,0.8);
 }
-.panel-header .stars-r { display:flex;gap:4px;font-size:9px; }
 
 /* Slot block */
-.slot-block {
-  margin-bottom: clamp(10px, 1.8vh, 16px);
+.slot-block { margin-bottom:clamp(10px,1.8vh,18px); }
+.slot-lbl {
+  font-size:clamp(5px,0.72vw,6px);
+  color:rgba(255,255,255,0.4);
+  letter-spacing:3px;margin-bottom:5px;text-align:center;
 }
-.slot-label {
-  font-size: clamp(5px, 0.75vw, 6px);
-  color: rgba(255,255,255,0.45);
-  letter-spacing: 3px;
-  margin-bottom: 5px;
-  text-align: center;
-}
-.slot-row {
-  display: flex;
-  align-items: stretch;
-  gap: 8px;
-}
+.slot-row { display:flex;align-items:stretch;gap:8px; }
 
-/* Main slot button — big blue panel exactly like Retro Bowl */
-.slot-main-btn {
-  flex: 1;
-  min-height: clamp(44px, 6vh, 58px);
-  background: var(--rb-panel);
-  border: 3px solid #fff;
-  box-shadow: 0 5px 0 var(--rb-btn-sh), 3px 3px 0 rgba(0,0,0,0.4);
-  color: #fff;
-  font-family: var(--font);
-  cursor: pointer;
-  text-align: left;
-  padding: 10px 16px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  transition: background 0.07s;
-  line-height: 1;
+/* Main slot btn — chunky blue Retro Bowl panel */
+.slot-btn {
+  flex:1;min-height:clamp(46px,7vh,62px);
+  background:var(--rb-panel);
+  border:3px solid #fff;
+  box-shadow:0 6px 0 var(--rb-btn-sh),3px 3px 0 rgba(0,0,0,0.45);
+  color:#fff;font-family:var(--font);
+  cursor:pointer;
+  display:flex;align-items:center;
+  justify-content:space-between;
+  padding:10px 18px;gap:12px;
+  transition:background 0.07s;line-height:1;
+  text-align:left;
 }
-.slot-main-btn:hover  { background: var(--rb-btn-hi); }
-.slot-main-btn:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--rb-btn-sh); }
+.slot-btn:hover  { background:var(--rb-btn-hi); }
+.slot-btn:active { transform:translateY(5px);box-shadow:0 1px 0 var(--rb-btn-sh); }
+.slot-btn.empty  {
+  justify-content:center;
+  color:rgba(255,255,255,0.72);
+  letter-spacing:2px;
+  font-size:clamp(8px,1.3vw,11px);
+}
+.slot-name { font-size:clamp(8px,1.4vw,12px);color:#fff;letter-spacing:1px; }
+.slot-info { font-size:clamp(5px,0.72vw,6px);color:rgba(200,220,255,0.78);margin-top:4px;letter-spacing:1px; }
+.slot-medals { font-size:clamp(9px,1.3vw,12px);flex-shrink:0;line-height:1.5; }
 
-/* Empty slot */
-.slot-main-btn.empty {
-  justify-content: center;
-  color: rgba(255,255,255,0.75);
-  letter-spacing: 2px;
-  font-size: clamp(8px, 1.3vw, 11px);
-}
-
-/* Filled slot */
-.slot-name {
-  font-size: clamp(8px, 1.4vw, 11px);
-  color: #fff;
-  letter-spacing: 1px;
-}
-.slot-info {
-  font-size: clamp(5px, 0.75vw, 6px);
-  color: rgba(200,220,255,0.8);
-  margin-top: 4px;
-  letter-spacing: 1px;
-}
-.slot-medals { font-size: clamp(8px, 1.2vw, 10px); flex-shrink: 0; }
-
-/* X delete button — exactly Retro Bowl: dark grey square */
+/* X delete — dark grey square, exact Retro Bowl */
 .slot-del {
-  flex: 0 0 auto;
-  width: clamp(38px, 5vw, 48px);
-  height: clamp(38px, 5vw, 48px);
-  background: var(--rb-grey2);
-  border: 3px solid rgba(255,255,255,0.45);
-  box-shadow: 0 4px 0 #181a22, 2px 2px 0 rgba(0,0,0,0.4);
-  color: rgba(255,255,255,0.45);
-  font-family: var(--font);
-  font-size: 13px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  align-self: center;
-  transition: background 0.07s;
+  flex:0 0 auto;
+  width:clamp(40px,5.5vw,50px);height:clamp(40px,5.5vw,50px);
+  background:var(--rb-grey2);
+  border:3px solid rgba(255,255,255,0.38);
+  box-shadow:0 4px 0 #181a22,2px 2px 0 rgba(0,0,0,0.4);
+  color:rgba(255,255,255,0.38);
+  font-family:var(--font);font-size:14px;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  align-self:center;transition:background 0.07s;
 }
-.slot-del:hover  { background: #7a1020; border-color: #ff6080; color: #ff8090; }
-.slot-del:active { transform: translateY(3px); }
-/* Disabled (no save) */
-.slot-del.disabled { opacity: 0.35; cursor: default; pointer-events: none; }
+.slot-del:hover  { background:#7a1020;border-color:#ff6080;color:#ff8090; }
+.slot-del:active { transform:translateY(3px); }
+.slot-del.dim    { opacity:0.32;pointer-events:none;cursor:default; }
 
-.version-tag {
-  position: fixed; bottom: 10px; right: 16px;
-  font-size: 5px; color: rgba(255,255,255,0.2); letter-spacing: 1px;
-  z-index: 2;
-}
+.ver { position:fixed;bottom:10px;right:16px;font-size:5px;color:rgba(255,255,255,0.18);letter-spacing:1px;z-index:2; }
 
 /* Confirm overlay */
-.overlay {
-  display: none; position: fixed; inset: 0;
-  background: rgba(0,0,0,0.78); z-index: 100;
-  align-items: center; justify-content: center;
-}
-.overlay.show { display: flex; }
+.overlay { display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:100;align-items:center;justify-content:center; }
+.overlay.show { display:flex; }
 .confirm-box {
-  background: var(--rb-panel);
-  border: 4px solid #fff;
-  box-shadow: 0 8px 0 var(--rb-btn-sh), 4px 4px 0 rgba(0,0,0,0.5);
-  padding: 28px 32px;
-  text-align: center;
-  min-width: 260px;
+  background:var(--rb-panel);
+  border:4px solid #fff;
+  box-shadow:0 8px 0 var(--rb-btn-sh),4px 4px 0 rgba(0,0,0,0.5);
+  padding:30px 36px;text-align:center;min-width:270px;
 }
-.confirm-box p {
-  font-size: clamp(8px, 1.3vw, 10px);
-  color: #fff;
-  margin-bottom: 8px;
-  line-height: 2;
-}
-.confirm-box p.sub {
-  font-size: clamp(6px, 0.9vw, 8px);
-  color: #ff8090;
-  margin-bottom: 20px;
-}
-.confirm-btns { display: flex; gap: 12px; justify-content: center; }
+.confirm-box h3 { font-size:clamp(9px,1.4vw,11px);color:#fff;margin-bottom:8px; }
+.confirm-box p  { font-size:clamp(6px,0.9vw,8px);color:#ff8090;margin-bottom:22px;line-height:2; }
+.confirm-btns   { display:flex;gap:14px;justify-content:center; }
 </style>
 </head>
 <body>
-
-<div class="bg-deco"></div>
+<div class="bg-dots"></div>
 
 <div class="career-page fadein">
 
-  <!-- Small logo left -->
+  <!-- Small logo -->
   <div class="logo-sm">
     <svg viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <radialGradient id="ig" cx="50%" cy="38%" r="55%">
           <stop offset="0%"   stop-color="#e8f8ff"/>
-          <stop offset="100%" stop-color="#88c8e8"/>
+          <stop offset="100%" stop-color="#80c0e0"/>
         </radialGradient>
         <path id="at" d="M 22,110 a88,88 0 0,1 176,0"/>
         <path id="ab" d="M 198,110 a88,88 0 0,1 -176,0"/>
       </defs>
-      <circle cx="110" cy="110" r="107" fill="#1a3a1a" stroke="rgba(255,255,255,0.8)" stroke-width="4"/>
-      <circle cx="110" cy="110" r="93"  fill="url(#ig)"/>
-      <circle cx="110" cy="110" r="40"  fill="none" stroke="rgba(100,170,210,0.4)" stroke-width="2"/>
-      <line x1="45" y1="110" x2="175" y2="110" stroke="rgba(100,170,210,0.35)" stroke-width="1.5"/>
-      <line x1="110" y1="45" x2="110" y2="175" stroke="rgba(100,170,210,0.35)" stroke-width="1.5"/>
-      <circle cx="110" cy="110" r="4" fill="rgba(200,50,70,0.55)"/>
-      <g transform="translate(92,82)">
-        <rect x="7" y="18" width="10" height="8"  fill="#e03050"/>
-        <rect x="6" y="26" width="4"  height="6"  fill="#1a2050"/>
-        <rect x="12" y="26" width="4" height="6"  fill="#1a2050"/>
-        <rect x="6" y="8"  width="12" height="11" fill="#e03050"/>
-        <rect x="0" y="10" width="6"  height="3"  fill="#e03050"/>
-        <rect x="18" y="10" width="6" height="3"  fill="#e03050"/>
-        <rect x="8" y="1"  width="8"  height="8"  fill="#f4c77c"/>
-        <rect x="8" y="0"  width="8"  height="3"  fill="#3a1808"/>
-        <rect x="5" y="32" width="5"  height="3"  fill="#f0f0f8"/>
-        <rect x="13" y="32" width="5" height="3"  fill="#f0f0f8"/>
+      <circle cx="110" cy="110" r="107" fill="#1c4a10" stroke="rgba(255,255,255,0.85)" stroke-width="4"/>
+      <circle cx="110" cy="110" r="92"  fill="url(#ig)"/>
+      <circle cx="110" cy="110" r="40"  fill="none" stroke="rgba(80,155,205,0.4)" stroke-width="2"/>
+      <line x1="44" y1="110" x2="176" y2="110" stroke="rgba(80,155,205,0.35)" stroke-width="1.5"/>
+      <line x1="110" y1="44"  x2="110" y2="176" stroke="rgba(80,155,205,0.35)" stroke-width="1.5"/>
+      <circle cx="110" cy="110" r="4" fill="rgba(210,38,58,0.6)"/>
+      <g transform="translate(90,81)">
+        <rect x="6" y="28" width="8"  height="6"  fill="#e8e8f2"/>
+        <rect x="18" y="28" width="8" height="6"  fill="#e8e8f2"/>
+        <rect x="5" y="19" width="9"  height="11" fill="#182058"/>
+        <rect x="18" y="19" width="9" height="11" fill="#101440"/>
+        <rect x="3" y="14" width="26" height="8"  fill="#c81838"/>
+        <rect x="3" y="14" width="26" height="3"  fill="rgba(255,255,255,0.2)"/>
+        <rect x="7" y="4"  width="18" height="12" fill="#c01030"/>
+        <rect x="7" y="4"  width="18" height="4"  fill="rgba(255,255,255,0.18)"/>
+        <rect x="0" y="6"  width="7"  height="4"  fill="#c01030"/>
+        <rect x="0" y="10" width="5"  height="4"  fill="#f0f0f2"/>
+        <rect x="25" y="6" width="7"  height="4"  fill="#a8102a"/>
+        <rect x="27" y="10" width="5" height="4"  fill="#f0f0f2"/>
+        <rect x="12" y="0" width="8"  height="5"  fill="#e8a870"/>
+        <rect x="10" y="-11" width="12" height="12" fill="#e8a870"/>
+        <rect x="10" y="-11" width="12" height="4"  fill="rgba(185,100,40,0.28)"/>
+        <rect x="12" y="-6"  width="3"  height="3"  fill="#1a0808"/>
+        <rect x="17" y="-6"  width="3"  height="3"  fill="#1a0808"/>
+        <rect x="12" y="-6"  width="1"  height="1"  fill="rgba(255,255,255,0.75)"/>
+        <rect x="17" y="-6"  width="1"  height="1"  fill="rgba(255,255,255,0.75)"/>
+        <rect x="13" y="-2"  width="6"  height="2"  fill="rgba(140,50,35,0.6)"/>
+        <rect x="10" y="-13" width="12" height="4"  fill="#5a2808"/>
+        <rect x="8"  y="-11" width="3"  height="8"  fill="#5a2808"/>
+        <rect x="20" y="-11" width="3"  height="10" fill="#3a1404"/>
       </g>
-      <text x="97" y="28" font-size="9" fill="#ffd700" font-family="serif">★</text>
-      <text x="108" y="22" font-size="7" fill="#fff"   font-family="serif">★</text>
-      <text x="118" y="28" font-size="9" fill="#ffd700" font-family="serif">★</text>
+      <text x="97" y="26" font-size="9"  fill="#ffd700" font-family="serif">★</text>
+      <text x="107" y="20" font-size="7" fill="#fff"    font-family="serif">★</text>
+      <text x="117" y="26" font-size="9" fill="#ffd700" font-family="serif">★</text>
       <text font-family="'Press Start 2P',monospace" font-size="11" fill="#fff" letter-spacing="3" text-anchor="middle">
         <textPath href="#at" startOffset="50%">RETRO ICE</textPath>
       </text>
@@ -231,16 +179,15 @@ body { background: #0a0a0a; overflow: hidden; }
 
   <!-- Slots panel -->
   <div class="slots-panel">
-    <div class="panel-header">
-      <button class="rb-btn rb-btn-sq back" onclick="location.href='index.html'" style="width:40px;height:40px;font-size:12px">◀</button>
+    <div class="panel-hdr">
+      <button class="rb-btn rb-btn-sq" onclick="location.href='index.html'" style="width:40px;height:40px;font-size:12px">◀</button>
       <div class="stars-title">
         <span class="st-r">★</span><span class="st-w">★</span><span class="st-b">★</span>
         &nbsp;CAREER&nbsp;
         <span class="st-b">★</span><span class="st-w">★</span><span class="st-r">★</span>
       </div>
-      <div style="width:40px"></div><!-- spacer to balance back btn -->
+      <div style="width:40px"></div>
     </div>
-
     <div id="slotsContainer"></div>
   </div>
 </div>
@@ -248,91 +195,59 @@ body { background: #0a0a0a; overflow: hidden; }
 <!-- Confirm delete -->
 <div class="overlay" id="confirmOverlay">
   <div class="confirm-box">
-    <p>DELETE THIS SAVE?</p>
-    <p class="sub">THIS CANNOT BE UNDONE!</p>
+    <h3>DELETE SAVE?</h3>
+    <p>THIS CANNOT BE UNDONE!</p>
     <div class="confirm-btns">
       <button class="rb-btn rb-btn-red" id="confirmYes">DELETE</button>
       <button class="rb-btn"            id="confirmNo">CANCEL</button>
     </div>
   </div>
 </div>
-
-<div class="version-tag">1.0</div>
+<div class="ver">1.0</div>
 
 <script src="js/save.js"></script>
 <script>
 function renderSlots(){
-  const slots = SaveSystem.allSlots();
-  const cont  = document.getElementById('slotsContainer');
-  cont.innerHTML = '';
-
-  slots.forEach(({slot, data}) => {
-    const block = document.createElement('div');
-    block.className = 'slot-block';
-
-    const lbl = document.createElement('div');
-    lbl.className = 'slot-label';
-    lbl.textContent = `SLOT ${slot}`;
-
-    const row = document.createElement('div');
-    row.className = 'slot-row';
-
-    // Main button
-    const btn = document.createElement('button');
+  const slots=SaveSystem.allSlots();
+  const cont=document.getElementById('slotsContainer');
+  cont.innerHTML='';
+  slots.forEach(({slot,data})=>{
+    const block=document.createElement('div'); block.className='slot-block';
+    const lbl=document.createElement('div'); lbl.className='slot-lbl'; lbl.textContent=`SLOT ${slot}`;
+    const row=document.createElement('div'); row.className='slot-row';
+    const btn=document.createElement('button');
     if(data){
-      const sk = data.skater;
-      const m  = data.medals || {};
-      btn.className = 'slot-main-btn';
-      btn.innerHTML = `
+      const sk=data.skater, m=data.medals||{};
+      btn.className='slot-btn';
+      btn.innerHTML=`
         <div>
           <div class="slot-name">${sk.firstName} ${sk.lastName}</div>
-          <div class="slot-info">${sk.nation} &nbsp;·&nbsp; SEASON ${data.season||1} &nbsp;·&nbsp; ${data.score||0} PTS</div>
+          <div class="slot-info">${sk.nation} · SEASON ${data.season||1} · ${data.score||0} PTS</div>
         </div>
-        <div class="slot-medals">🥇${m.gold||0} &nbsp;🥈${m.silver||0} &nbsp;🥉${m.bronze||0}</div>
-      `;
-      btn.addEventListener('click', ()=>{
-        sessionStorage.setItem('activeSlot', slot);
-        location.href = 'game.html';
-      });
+        <div class="slot-medals">🥇${m.gold||0} 🥈${m.silver||0} 🥉${m.bronze||0}</div>`;
+      btn.addEventListener('click',()=>{ sessionStorage.setItem('activeSlot',slot); location.href='game.html'; });
     } else {
-      btn.className = 'slot-main-btn empty';
-      btn.textContent = 'NEW CAREER';
-      btn.addEventListener('click', ()=>{
-        sessionStorage.setItem('activeSlot', slot);
-        location.href = 'create.html';
-      });
+      btn.className='slot-btn empty'; btn.textContent='NEW CAREER';
+      btn.addEventListener('click',()=>{ sessionStorage.setItem('activeSlot',slot); location.href='create.html'; });
     }
-
-    // Delete button
-    const del = document.createElement('button');
-    del.className = 'slot-del' + (data ? '' : ' disabled');
-    del.textContent = '✕';
-    if(data) del.addEventListener('click', ()=> confirmDelete(slot));
-
-    row.appendChild(btn);
-    row.appendChild(del);
-    block.appendChild(lbl);
-    block.appendChild(row);
+    const del=document.createElement('button');
+    del.className='slot-del'+(data?'':' dim'); del.textContent='✕';
+    if(data) del.addEventListener('click',()=>confirmDelete(slot));
+    row.appendChild(btn); row.appendChild(del);
+    block.appendChild(lbl); block.appendChild(row);
     cont.appendChild(block);
   });
 }
-
-let deleteSlot = null;
-function confirmDelete(slot){
-  deleteSlot = slot;
-  document.getElementById('confirmOverlay').classList.add('show');
-}
-document.getElementById('confirmYes').addEventListener('click', ()=>{
+let deleteSlot=null;
+function confirmDelete(slot){ deleteSlot=slot; document.getElementById('confirmOverlay').classList.add('show'); }
+document.getElementById('confirmYes').addEventListener('click',()=>{
   if(deleteSlot) SaveSystem.del(deleteSlot);
   document.getElementById('confirmOverlay').classList.remove('show');
-  deleteSlot = null;
-  renderSlots();
+  deleteSlot=null; renderSlots();
 });
-document.getElementById('confirmNo').addEventListener('click', ()=>{
-  document.getElementById('confirmOverlay').classList.remove('show');
-  deleteSlot = null;
+document.getElementById('confirmNo').addEventListener('click',()=>{
+  document.getElementById('confirmOverlay').classList.remove('show'); deleteSlot=null;
 });
-
 renderSlots();
 </script>
 </body>
