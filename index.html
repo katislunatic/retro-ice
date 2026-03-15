@@ -6,400 +6,433 @@
 <title>Retro Ice</title>
 <link rel="stylesheet" href="css/style.css">
 <style>
-body { background:#0a1020; }
-
-.title-page {
-  width:100vw; height:100vh;
-  display:flex;
-  flex-direction:row;
-  align-items:center;
-  justify-content:center;
-  gap:0;
-  position:relative;
-  overflow:hidden;
+/* ── GREEN BG with halftone dots, exactly like RST ── */
+body {
+  background: #4aaa20;
+  overflow: hidden;
 }
 
-/* Ice rink bg */
-.rink-bg-full {
-  position:fixed; inset:0;
-  background:linear-gradient(180deg,
-    #08111e 0%,
-    #0d1c36 20%,
-    #1a3050 28%,
-    #c0eaf8 28%,
-    #d8f4ff 55%,
-    #b0e0f2 100%
+.halftone {
+  position: fixed; inset: 0; z-index: 0;
+  background-image: radial-gradient(circle, rgba(0,0,0,0.14) 1.5px, transparent 1.5px);
+  background-size: 12px 12px;
+  pointer-events: none;
+}
+
+/* Subtle vignette like RST */
+.vignette {
+  position: fixed; inset: 0; z-index: 0;
+  background: radial-gradient(ellipse at 50% 50%,
+    transparent 40%,
+    rgba(0,0,0,0.35) 100%
   );
-  z-index:-2;
-}
-/* Rink lines */
-.rink-bg-full::before {
-  content:'';
-  position:absolute;
-  left:0;right:0;
-  top:28%;height:72%;
-  background:
-    radial-gradient(ellipse 300px 80px at 50% 40%, rgba(130,210,240,0.18) 0%, transparent 80%),
-    repeating-linear-gradient(0deg, transparent 0, transparent 38px, rgba(120,200,230,0.1) 38px, rgba(120,200,230,0.1) 40px);
-}
-/* Crowd dots */
-.rink-bg-full::after {
-  content:'';
-  position:absolute;
-  left:0;right:0;top:0;height:28%;
-  background:
-    repeating-linear-gradient(90deg,
-      #c04868 0px, #c04868 10px,
-      #1a3060 10px, #1a3060 22px,
-      #38a848 22px, #38a848 32px,
-      #c09030 32px, #c09030 44px,
-      #703080 44px, #703080 54px,
-      #c04868 54px
-    );
-  opacity:0.35;
-  mask-image:repeating-linear-gradient(180deg,
-    rgba(0,0,0,0.5) 0px, rgba(0,0,0,0.5) 8px,
-    transparent 8px, transparent 16px
-  );
+  pointer-events: none;
 }
 
-/* ── LEFT: decorative skater art area ── */
-.left-art {
-  flex:0 0 38%;
-  height:100%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  position:relative;
+/* Snowflake/star shapes in bg like RST tennis ball ghosts */
+.bg-deco {
+  position: fixed; inset: 0; z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.bg-deco span {
+  position: absolute;
+  color: rgba(255,255,255,0.07);
+  font-family: serif;
+  font-size: 60px;
+  user-select: none;
 }
 
-/* ── CENTER: logo ── */
-.logo-area {
-  flex:0 0 auto;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  gap:0;
+/* ── LAYOUT: portrait-friendly landscape ── */
+.title-wrap {
+  position: relative; z-index: 1;
+  width: 100vw; height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(20px, 4vw, 60px);
 }
 
-/* Circular logo badge - like Retro Slam Tennis */
-.logo-badge {
-  position:relative;
-  width:clamp(180px, 22vw, 280px);
-  height:clamp(180px, 22vw, 280px);
-}
-.logo-badge svg {
-  width:100%;height:100%;
-  filter: drop-shadow(0 0 20px rgba(74,200,240,0.5));
+/* ── LEFT / RIGHT decorative space ── */
+.side-space { flex: 1; }
+
+/* ── LOGO CENTER ── */
+.logo-center {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
 }
 
-/* ── RIGHT: menu area ── */
-.right-menu {
-  flex:0 0 38%;
-  height:100%;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  gap:18px;
-  padding:0 40px;
+.logo-ring {
+  position: relative;
+  width: clamp(200px, 26vw, 320px);
+  height: clamp(200px, 26vw, 320px);
+  filter: drop-shadow(0 0 30px rgba(255,255,255,0.3));
+}
+.logo-ring svg { width: 100%; height: 100%; }
+
+/* ── MENU RIGHT ── */
+.menu-col {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 14px;
+  min-width: clamp(180px, 22vw, 280px);
 }
 
-.game-subtitle {
-  font-size:clamp(6px,1vw,8px);
-  color:var(--ice-light);
-  letter-spacing:3px;
-  text-align:center;
-  margin-bottom:4px;
+/* Big PLAY button exactly like RST */
+.play-wrap {
+  background: rgba(0,0,0,0.15);
+  border: 3px solid rgba(255,255,255,0.3);
+  box-shadow: 0 4px 0 rgba(0,0,0,0.3);
+  padding: 4px;
 }
 
-.menu-btn {
-  width:100%;
-  max-width:280px;
+.play-btn {
+  width: 100%;
+  background: #b08000;
+  border: 3px solid rgba(255,255,255,0.85);
+  box-shadow: 0 5px 0 #6a4800;
+  color: #f8d030;
+  font-family: var(--font);
+  font-size: clamp(14px, 2.2vw, 20px);
+  letter-spacing: 3px;
+  padding: 14px 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  transition: background 0.07s;
 }
+.play-btn:hover  { background: #c89010; }
+.play-btn:active { transform: translateY(4px); box-shadow: 0 1px 0 #6a4800; }
 
+/* Smaller sub-buttons row like RST */
+.sub-btns {
+  display: flex;
+  gap: 10px;
+}
+.sub-btn {
+  flex: 1;
+  background: rgba(40,100,20,0.7);
+  border: 3px solid rgba(255,255,255,0.7);
+  box-shadow: 0 4px 0 rgba(0,0,0,0.35);
+  color: #fff;
+  font-family: var(--font);
+  font-size: clamp(6px, 1vw, 9px);
+  letter-spacing: 1px;
+  padding: 10px 8px;
+  cursor: pointer;
+  text-align: center;
+  transition: background 0.07s;
+}
+.sub-btn:hover  { background: rgba(60,130,30,0.85); }
+.sub-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 rgba(0,0,0,0.35); }
+
+/* Info popup — like RST's minimal style */
+.info-popup {
+  background: rgba(20,60,10,0.92);
+  border: 3px solid rgba(255,255,255,0.75);
+  box-shadow: 0 5px 0 rgba(0,0,0,0.4);
+  padding: 14px 16px;
+  display: none;
+}
+.info-popup.show { display: block; }
+.info-popup p { font-size: clamp(5px, 0.8vw, 7px); color: #cce; line-height: 2.2; }
+.info-popup b  { color: #f8d030; }
+
+/* Copyright like RST */
 .copyright {
-  position:absolute;
-  bottom:10px; right:16px;
-  font-size:5px;
-  color:rgba(74,200,240,0.4);
-  letter-spacing:1px;
+  position: fixed;
+  bottom: 10px; left: 0; right: 0;
+  text-align: center;
+  font-size: clamp(4px, 0.6vw, 6px);
+  color: rgba(255,255,255,0.35);
+  letter-spacing: 2px;
+  z-index: 2;
 }
 
-/* Skater pixel art on left */
-#artCanvas {
-  image-rendering:pixelated;
-  filter:drop-shadow(4px 4px 0 rgba(0,30,60,0.5));
+/* Skating figure animation on left */
+.skater-showcase {
+  flex: 0 0 auto;
+  position: relative;
+  width: clamp(100px, 12vw, 160px);
+  height: clamp(140px, 16vw, 200px);
+}
+#showcaseCanvas {
+  image-rendering: pixelated;
+  width: 100%; height: 100%;
 }
 
-/* Sparkle animation */
-@keyframes sparkleFloat {
-  0%   { transform:translateY(0) scale(1); opacity:1; }
-  100% { transform:translateY(-60px) scale(0.4); opacity:0; }
+/* Sparkle particles */
+.sparkle-layer {
+  position: fixed; inset: 0; z-index: 0;
+  pointer-events: none; overflow: hidden;
 }
-.sparkle-cont {
-  position:absolute;
-  inset:0;
-  pointer-events:none;
-  overflow:hidden;
-}
-.sparkle-cont span {
-  position:absolute;
-  bottom:30%;
-  font-size:10px;
-  animation: sparkleFloat linear infinite;
-  color:#fff;
-}
-
-@keyframes rotateBadge {
-  from{transform:rotate(0deg)} to{transform:rotate(360deg)}
+.sparkle-layer i {
+  position: absolute;
+  font-style: normal;
+  animation: sparkleF linear infinite;
+  color: rgba(255,255,255,0.6);
+  font-size: 8px;
+  font-family: serif;
 }
 </style>
 </head>
 <body>
-<div class="rink-bg-full"></div>
 
-<div class="title-page fadeup">
+<!-- Background layers -->
+<div class="halftone"></div>
+<div class="vignette"></div>
+<div class="bg-deco" id="bgDeco"></div>
+<div class="sparkle-layer" id="sparkleLayer"></div>
 
-  <!-- LEFT art panel -->
-  <div class="left-art">
-    <div class="sparkle-cont" id="sparkles"></div>
-    <canvas id="artCanvas" width="120" height="160" style="width:clamp(90px,12vw,150px);height:auto"></canvas>
+<div class="title-wrap fadein">
+
+  <!-- Animated skater left -->
+  <div class="skater-showcase">
+    <canvas id="showcaseCanvas" width="80" height="110"></canvas>
   </div>
 
-  <!-- CENTER logo -->
-  <div class="logo-area">
-    <div class="logo-badge pulse">
-      <svg viewBox="0 0 280 280" xmlns="http://www.w3.org/2000/svg">
+  <!-- Big logo badge center -->
+  <div class="logo-center">
+    <div class="logo-ring pulse">
+      <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
         <defs>
-          <path id="topArc"   d="M 50,140 a90,90 0 0,1 180,0"/>
-          <path id="botArc"   d="M 230,140 a90,90 0 0,1 -180,0"/>
-        </defs>
-        <!-- Outer ring -->
-        <circle cx="140" cy="140" r="130" fill="#0d2a4a" stroke="#4ac8f0" stroke-width="4"/>
-        <circle cx="140" cy="140" r="118" fill="none"    stroke="#1a4a7a" stroke-width="2"/>
-        <!-- Ice rink inner disc -->
-        <circle cx="140" cy="140" r="100" fill="url(#iceGrad)"/>
-        <defs>
-          <radialGradient id="iceGrad" cx="50%" cy="40%" r="60%">
-            <stop offset="0%"   stop-color="#d8f4ff"/>
-            <stop offset="60%"  stop-color="#a8dcf0"/>
-            <stop offset="100%" stop-color="#70b8d8"/>
+          <radialGradient id="iceGrad" cx="50%" cy="38%" r="55%">
+            <stop offset="0%"   stop-color="#e8f8ff"/>
+            <stop offset="50%"  stop-color="#c0e8f8"/>
+            <stop offset="100%" stop-color="#88c8e8"/>
           </radialGradient>
+          <path id="arcTop" d="M 35,150 a115,115 0 0,1 230,0"/>
+          <path id="arcBot" d="M 265,150 a115,115 0 0,1 -230,0"/>
         </defs>
-        <!-- Center circle on ice -->
-        <circle cx="140" cy="140" r="40" fill="none" stroke="rgba(100,180,220,0.5)" stroke-width="2"/>
-        <line x1="90" y1="140" x2="190" y2="140" stroke="rgba(100,180,220,0.4)" stroke-width="1.5"/>
-        <line x1="140" y1="90" x2="140" y2="190" stroke="rgba(100,180,220,0.4)" stroke-width="1.5"/>
-        <!-- Pixel skater silhouette on badge -->
-        <g transform="translate(115,105)" style="image-rendering:pixelated">
-          <!-- body -->
-          <rect x="10" y="20" width="12" height="14" fill="#e03050"/>
-          <!-- head -->
-          <rect x="11" y="12" width="10" height="9"  fill="#f4c77c"/>
-          <!-- hair -->
-          <rect x="11" y="10" width="10" height="4"  fill="#3a1a08"/>
+
+        <!-- Outer glow ring -->
+        <circle cx="150" cy="150" r="145" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="8"/>
+        <!-- Dark outer band -->
+        <circle cx="150" cy="150" r="140" fill="#1a4a1a" stroke="rgba(255,255,255,0.85)" stroke-width="5"/>
+        <!-- Inner ring border -->
+        <circle cx="150" cy="150" r="124" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="2"/>
+        <!-- Ice disc -->
+        <circle cx="150" cy="150" r="118" fill="url(#iceGrad)"/>
+
+        <!-- Rink markings -->
+        <circle cx="150" cy="150" r="52" fill="none" stroke="rgba(100,170,210,0.45)" stroke-width="2.5"/>
+        <line x1="60" y1="150" x2="240" y2="150" stroke="rgba(100,170,210,0.4)" stroke-width="2"/>
+        <line x1="150" y1="60" x2="150" y2="240" stroke="rgba(100,170,210,0.4)" stroke-width="2"/>
+        <!-- Center dot -->
+        <circle cx="150" cy="150" r="5" fill="rgba(200,50,70,0.6)"/>
+
+        <!-- Pixel skater on badge -->
+        <g transform="translate(126,116)">
+          <!-- skirt/pants -->
+          <rect x="8"  y="22" width="12" height="9"  fill="#e03050"/>
           <!-- legs -->
-          <rect x="9"  y="34" width="5"  height="8"  fill="#1a2a4a"/>
-          <rect x="16" y="34" width="5"  height="8"  fill="#1a2a4a"/>
+          <rect x="7"  y="31" width="5"  height="7"  fill="#1a2050"/>
+          <rect x="14" y="31" width="5"  height="7"  fill="#1a2050"/>
+          <!-- body -->
+          <rect x="7"  y="10" width="14" height="13" fill="#e03050"/>
+          <!-- arms -->
+          <rect x="0"  y="12" width="7"  height="3"  fill="#e03050"/>
+          <rect x="21" y="12" width="7"  height="3"  fill="#e03050"/>
+          <!-- head -->
+          <rect x="9"  y="2"  width="10" height="9"  fill="#f4c77c"/>
+          <!-- hair -->
+          <rect x="9"  y="0"  width="10" height="4"  fill="#3a1808"/>
           <!-- boots -->
-          <rect x="8"  y="42" width="7"  height="3"  fill="#fff"/>
-          <rect x="15" y="42" width="7"  height="3"  fill="#fff"/>
+          <rect x="6"  y="38" width="7"  height="3"  fill="#f0f0f8"/>
+          <rect x="14" y="38" width="7"  height="3"  fill="#f0f0f8"/>
           <!-- blades -->
-          <rect x="7"  y="45" width="9"  height="1"  fill="#c0d8f0"/>
-          <rect x="14" y="45" width="9"  height="1"  fill="#c0d8f0"/>
-          <!-- arms extended -->
-          <rect x="1"  y="22" width="9"  height="3"  fill="#e03050"/>
-          <rect x="22" y="22" width="9"  height="3"  fill="#e03050"/>
+          <rect x="5"  y="41" width="9"  height="1"  fill="rgba(200,230,255,0.9)"/>
+          <rect x="13" y="41" width="9"  height="1"  fill="rgba(200,230,255,0.9)"/>
+          <!-- sparkles -->
+          <rect x="-8" y="6"  width="3" height="3"  fill="#fff" opacity="0.7"/>
+          <rect x="33" y="4"  width="3" height="3"  fill="#fff" opacity="0.7"/>
+          <rect x="-4" y="15" width="2" height="2"  fill="#ffd700" opacity="0.8"/>
+          <rect x="30" y="16" width="2" height="2"  fill="#ffd700" opacity="0.8"/>
         </g>
-        <!-- Snowflakes -->
-        <text x="80"  y="80"  font-size="12" fill="rgba(255,255,255,0.5)" font-family="serif">❄</text>
-        <text x="178" y="75"  font-size="10" fill="rgba(255,255,255,0.4)" font-family="serif">❄</text>
-        <text x="175" y="195" font-size="9"  fill="rgba(255,255,255,0.35)" font-family="serif">❄</text>
-        <text x="82"  y="198" font-size="11" fill="rgba(255,255,255,0.4)" font-family="serif">❄</text>
-        <!-- Curved top text -->
-        <text font-family="'Press Start 2P', monospace" font-size="15" fill="#ffffff" letter-spacing="3"
-              text-anchor="middle">
-          <textPath href="#topArc" startOffset="50%">RETRO ICE</textPath>
+
+        <!-- Snowflakes on ice disc -->
+        <text x="85"  y="96"  font-size="14" fill="rgba(255,255,255,0.4)" font-family="serif">❄</text>
+        <text x="192" y="90"  font-size="11" fill="rgba(255,255,255,0.35)" font-family="serif">❄</text>
+        <text x="190" y="210" font-size="12" fill="rgba(255,255,255,0.3)" font-family="serif">❄</text>
+        <text x="84"  y="212" font-size="10" fill="rgba(255,255,255,0.35)" font-family="serif">❄</text>
+
+        <!-- Stars at top like RST -->
+        <text x="130" y="38" font-size="11" fill="#ffd700" font-family="serif">★</text>
+        <text x="145" y="30" font-size="9"  fill="#ffffff" font-family="serif">★</text>
+        <text x="159" y="38" font-size="11" fill="#ffd700" font-family="serif">★</text>
+
+        <!-- Curved TOP text: RETRO ICE -->
+        <text font-family="'Press Start 2P',monospace" font-size="16" fill="#ffffff"
+              letter-spacing="4" text-anchor="middle"
+              style="text-shadow:1px 1px 0 rgba(0,0,0,0.5)">
+          <textPath href="#arcTop" startOffset="50%">RETRO ICE</textPath>
         </text>
-        <!-- Curved bottom text -->
-        <text font-family="'Press Start 2P', monospace" font-size="13" fill="#4ac8f0" letter-spacing="2"
-              text-anchor="middle">
-          <textPath href="#botArc" startOffset="50%">FIGURE SKATING</textPath>
+        <!-- Curved BOTTOM text: FIGURE SKATING -->
+        <text font-family="'Press Start 2P',monospace" font-size="12" fill="rgba(255,255,255,0.9)"
+              letter-spacing="2" text-anchor="middle">
+          <textPath href="#arcBot" startOffset="50%">FIGURE SKATING</textPath>
         </text>
-        <!-- Border stars -->
-        <text x="125" y="32"  font-size="10" fill="#ffd700" font-family="serif">★</text>
-        <text x="140" y="26"  font-size="8"  fill="#ffffff" font-family="serif">★</text>
-        <text x="155" y="32"  font-size="10" fill="#ffd700" font-family="serif">★</text>
       </svg>
     </div>
   </div>
 
-  <!-- RIGHT menu -->
-  <div class="right-menu">
-    <p class="game-subtitle">❄ THE RETRO SKATING EXPERIENCE ❄</p>
-
-    <button class="btn btn-gold btn-lg menu-btn" onclick="location.href='career.html'">
-      ▶ &nbsp;PLAY
-    </button>
-
-    <div style="display:flex;gap:10px;width:100%;max-width:280px">
-      <button class="btn btn-sm" style="flex:1" onclick="showControls()">CONTROLS</button>
-      <button class="btn btn-sm" style="flex:1" onclick="showAbout()">ABOUT</button>
+  <!-- Menu right -->
+  <div class="menu-col">
+    <!-- PLAY button in a container like RST -->
+    <div class="play-wrap">
+      <button class="play-btn" onclick="location.href='career.html'">
+        PLAY &nbsp; <span style="font-size:0.75em">⛸</span>
+      </button>
     </div>
 
-    <!-- Controls hint -->
-    <div id="infoBox" style="display:none;max-width:280px;width:100%">
-      <div class="panel" style="padding:14px">
-        <p class="section-title" id="infoTitle">CONTROLS</p>
-        <div id="infoContent" style="font-size:6px;color:#aaa;line-height:2.2;text-align:left"></div>
-      </div>
+    <!-- Sub buttons -->
+    <div class="sub-btns">
+      <button class="sub-btn" onclick="toggleInfo('controls')">CONTROLS</button>
+      <button class="sub-btn" onclick="toggleInfo('about')">ABOUT</button>
+    </div>
+
+    <!-- Info box -->
+    <div class="info-popup" id="infoPopup">
+      <p id="infoText"></p>
     </div>
   </div>
 
-  <div class="copyright">© RETRO ICE · ALL RIGHTS RESERVED</div>
+  <div class="side-space"></div>
 </div>
+
+<div class="copyright">COPYRIGHT 2025 RETRO ICE · ALL RIGHTS RESERVED.</div>
 
 <script src="js/save.js"></script>
 <script>
-// ── Sparkles ──────────────────────────────────────────
-const sc = document.getElementById('sparkles');
-for(let i=0;i<12;i++){
+// Background deco snowflakes/stars like RST's tennis ball ghosts
+const deco = document.getElementById('bgDeco');
+const decoSymbols = ['❄','★','❅','✦','❆'];
+const decoPos = [
+  [5,8],[15,70],[25,35],[40,15],[55,80],[65,45],[75,20],[85,60],[92,40],[10,90],[45,55],[80,85]
+];
+decoPos.forEach(([x,y],i)=>{
   const s = document.createElement('span');
-  s.textContent = ['❄','★','·','✦','*'][Math.floor(Math.random()*5)];
-  s.style.cssText = `
-    left:${10+Math.random()*80}%;
-    animation-duration:${2+Math.random()*4}s;
-    animation-delay:${Math.random()*3}s;
-    opacity:${0.3+Math.random()*0.6};
-    font-size:${6+Math.floor(Math.random()*10)}px;
-    color:${['#fff','#4ac8f0','#ffd700'][Math.floor(Math.random()*3)]};
-  `;
-  sc.appendChild(s);
+  s.textContent = decoSymbols[i%decoSymbols.length];
+  s.style.cssText = `left:${x}%;top:${y}%;font-size:${40+Math.random()*40}px;transform:rotate(${Math.random()*360}deg)`;
+  deco.appendChild(s);
+});
+
+// Sparkle particles
+const sl = document.getElementById('sparkleLayer');
+for(let i=0;i<16;i++){
+  const s=document.createElement('i');
+  s.textContent=['❄','★','·','✦'][i%4];
+  s.style.cssText=`left:${Math.random()*100}%;bottom:${20+Math.random()*60}%;animation-duration:${3+Math.random()*5}s;animation-delay:${Math.random()*4}s;color:rgba(255,255,255,${0.2+Math.random()*0.5});font-size:${5+Math.floor(Math.random()*9)}px`;
+  sl.appendChild(s);
 }
 
-// ── Pixel skater art ──────────────────────────────────
-const ac = document.getElementById('artCanvas');
-const ax = ac.getContext('2d');
-ax.imageSmoothingEnabled = false;
+// Showcase canvas — bigger, more detailed skater
+const sc = document.getElementById('showcaseCanvas');
+const sx = sc.getContext('2d');
+sx.imageSmoothingEnabled = false;
+let t = 0;
 
-function drawArtSkater(t) {
-  ax.clearRect(0,0,120,160);
-  const glide = Math.sin(t*0.002)*3;
+function drawShowcase(){
+  sx.clearRect(0,0,80,110);
+  const glide = Math.sin(t*0.025)*2;
+  const bob   = Math.sin(t*0.04)*1.5;
+  const armL  = Math.sin(t*0.03)*3;
 
-  // Ice trail
-  ax.fillStyle='rgba(180,230,255,0.3)';
-  for(let i=0;i<5;i++){
-    ax.fillRect(30+i*8, 128, 12, 2);
-  }
+  // ice trail
+  sx.fillStyle='rgba(200,240,255,0.35)';
+  for(let i=0;i<6;i++) sx.fillRect(14+i*9, 96, 8, 2);
 
-  // Shadow
-  ax.fillStyle='rgba(30,80,120,0.2)';
-  ax.fillRect(38+glide, 128, 44, 5);
+  // shadow
+  sx.fillStyle='rgba(50,150,50,0.25)';
+  sx.fillRect(20+glide, 97, 40, 6);
 
-  // Skirt / pants
-  ax.fillStyle='#1a2a4a';
-  ax.fillRect(44+glide,106,32,20);
-  // Body coat
-  ax.fillStyle='#e03050';
-  ax.fillRect(42+glide,74,36,34);
-  // Head
-  ax.fillStyle='#f4c77c';
-  ax.fillRect(50+glide,54,22,22);
-  // Hair
-  ax.fillStyle='#3a1a08';
-  ax.fillRect(50+glide,50,22,10);
-  // Arms (arabesque pose)
-  ax.fillStyle='#e03050';
-  ax.fillRect(18+glide,80,24,8);
-  ax.fillRect(78+glide,80,24,8);
-  // Gloves
-  ax.fillStyle='#fff';
-  ax.fillRect(14+glide,80,6,6);
-  ax.fillRect(100+glide,80,6,6);
-  // Extended leg (arabesque)
-  const legAngle = Math.sin(t*0.003)*6;
-  ax.fillStyle='#1a2a4a';
-  ax.fillRect(62+glide,118,40,10);
-  // Standing leg
-  ax.fillRect(44+glide,118,16,18);
-  // Boots
-  ax.fillStyle='#f0f0f8';
-  ax.fillRect(42+glide,130,18,8);
-  ax.fillRect(60+glide,124,14,6);
-  // Blades
-  ax.fillStyle='rgba(200,230,255,0.9)';
-  ax.fillRect(40+glide,138,22,2);
-  ax.fillRect(58+glide,130,18,2);
+  const x = 40+glide, y = 86+bob;
 
-  // Sparkles
-  const sp = [[-14,-20],[+20,-28],[-8,-35],[+16,-12]];
-  sp.forEach(([dx,dy],i)=>{
-    const a = Math.sin(t*0.004+i)*0.8+0.2;
-    ax.globalAlpha=a;
-    ax.fillStyle=['#fff','#ffd700','#4ac8f0','#fff'][i];
-    ax.fillRect(60+glide+dx,90+dy,4,4);
-    ax.fillRect(60+glide+dx+2,90+dy-2,2,2);
+  // legs alternate
+  sx.fillStyle='#1a2050';
+  const loff = Math.sin(t*0.05)*3;
+  sx.fillRect(x-10+loff, y-8, 8, 12);
+  sx.fillRect(x+2-loff,  y-8, 8, 12);
+
+  // skirt
+  sx.fillStyle='#e03050';
+  sx.fillRect(x-11, y-16, 22, 9);
+
+  // body
+  sx.fillStyle='#e03050';
+  sx.fillRect(x-9, y-30, 18, 15);
+
+  // arms
+  sx.fillStyle='#e03050';
+  sx.fillRect(x-18, y-28+armL, 9, 5);
+  sx.fillRect(x+9,  y-28-armL, 9, 5);
+  sx.fillStyle='#fff';
+  sx.fillRect(x-21, y-28+armL, 4, 4);
+  sx.fillRect(x+17, y-28-armL, 4, 4);
+
+  // head
+  sx.fillStyle='#f4c77c';
+  sx.fillRect(x-7, y-42, 14, 13);
+  // hair
+  sx.fillStyle='#3a1808';
+  sx.fillRect(x-7, y-45, 14, 6);
+  sx.fillRect(x+7, y-40, 3, 12);
+  // eyes
+  sx.fillStyle='rgba(0,0,0,0.75)';
+  sx.fillRect(x-4, y-38, 3, 3);
+  sx.fillRect(x+2, y-38, 3, 3);
+
+  // boots
+  sx.fillStyle='#f0f0f8';
+  sx.fillRect(x-12+loff, y+4, 9, 5);
+  sx.fillRect(x+3-loff,  y+4, 9, 5);
+  // blades
+  sx.fillStyle='rgba(180,220,255,0.9)';
+  sx.fillRect(x-13+loff, y+9, 11, 1);
+  sx.fillRect(x+2-loff,  y+9, 11, 1);
+
+  // sparkles
+  const sparkles = [[-18,-32,1],[18,-30,0],[-12,-18,0],[20,-16,1]];
+  sparkles.forEach(([dx,dy,phase],i)=>{
+    const a=Math.sin(t*0.04+i*1.2+phase)*0.5+0.5;
+    sx.globalAlpha=a*0.8;
+    sx.fillStyle=['#fff','#ffd700','#88eeff','#fff'][i];
+    sx.fillRect(x+dx, y+dy, 3, 3);
+    if(a>0.6){ sx.fillRect(x+dx+1, y+dy-2, 2, 2); }
   });
-  ax.globalAlpha=1;
+  sx.globalAlpha=1;
+
+  t++;
+  requestAnimationFrame(drawShowcase);
 }
+drawShowcase();
 
-let artT=0;
-function animArt(){
-  artT++;
-  drawArtSkater(artT);
-  requestAnimationFrame(animArt);
+// Info toggles
+let openInfo = '';
+const INFO = {
+  controls: `<b>KEYBOARD</b><br>← → &nbsp;· SKATE<br>Z &nbsp;&nbsp;&nbsp;&nbsp;· JUMP<br>X &nbsp;&nbsp;&nbsp;&nbsp;· SPIN<br>SPACE · POSE<br><br><b>COMBOS</b><br>Z→X · AXEL &nbsp;(900)<br>X→Z · LUTZ &nbsp;(750)<br>Z→SP · SALCHOW (650)<br>X→SP · TOE LOOP (550)`,
+  about: `<b>RETRO ICE</b><br>A FIGURE SKATING<br>CAREER GAME.<br><br>COMPETE · EARN MEDALS<br>BUILD YOUR LEGACY!<br><br><b>VERSION 1.0</b>`
+};
+function toggleInfo(k){
+  const box = document.getElementById('infoPopup');
+  if(openInfo===k){ box.classList.remove('show'); openInfo=''; return; }
+  document.getElementById('infoText').innerHTML = INFO[k];
+  box.classList.add('show');
+  openInfo = k;
 }
-animArt();
-
-// ── Info boxes ───────────────────────────────────────
-const CONTROLS_HTML = `
-  <b style="color:#4ac8f0">KEYBOARD</b><br>
-  ← → &nbsp;· Skate<br>
-  Z &nbsp;&nbsp;&nbsp;&nbsp;· Jump<br>
-  X &nbsp;&nbsp;&nbsp;&nbsp;· Spin<br>
-  SPACE · Pose<br><br>
-  <b style="color:#4ac8f0">COMBOS</b><br>
-  Z+X &nbsp;· Axel &nbsp;(800pts)<br>
-  X+Z &nbsp;· Lutz &nbsp;(700pts)<br>
-  Z+SP· Salchow (600pts)<br>
-  X &nbsp;&nbsp;&nbsp;· Spin &nbsp;(400pts)<br>
-  SP &nbsp;· Spiral (300pts)<br>
-  Z &nbsp;&nbsp;&nbsp;· Jump &nbsp;(200pts)<br><br>
-  <b style="color:#ffd700">COMBOS multiply score!</b>
-`;
-
-const ABOUT_HTML = `
-  <b style="color:#4ac8f0">RETRO ICE</b><br>
-  A figure skating game<br>
-  inspired by retro classics.<br><br>
-  Compete in events, earn<br>
-  medals &amp; build your career!<br><br>
-  <b style="color:#ffd700">Version 1.0</b>
-`;
-
-let infoOpen = '';
-function showControls(){
-  if(infoOpen==='controls'){
-    document.getElementById('infoBox').style.display='none';
-    infoOpen=''; return;
+document.addEventListener('click', e=>{
+  const box = document.getElementById('infoPopup');
+  if(!box.contains(e.target) && !e.target.closest('.sub-btn')){
+    box.classList.remove('show'); openInfo='';
   }
-  document.getElementById('infoTitle').textContent='CONTROLS';
-  document.getElementById('infoContent').innerHTML=CONTROLS_HTML;
-  document.getElementById('infoBox').style.display='block';
-  infoOpen='controls';
-}
-function showAbout(){
-  if(infoOpen==='about'){
-    document.getElementById('infoBox').style.display='none';
-    infoOpen=''; return;
-  }
-  document.getElementById('infoTitle').textContent='ABOUT';
-  document.getElementById('infoContent').innerHTML=ABOUT_HTML;
-  document.getElementById('infoBox').style.display='block';
-  infoOpen='about';
-}
+});
 </script>
 </body>
 </html>

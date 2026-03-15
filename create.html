@@ -3,44 +3,98 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Retro Ice – Create Skater</title>
+<title>Retro Ice – New Career</title>
 <link rel="stylesheet" href="css/style.css">
 <style>
-.rink-bg-full{position:fixed;inset:0;background:linear-gradient(180deg,#08111e 0%,#0d1c36 20%,#1a3050 28%,#c0eaf8 28%,#d8f4ff 55%,#b0e0f2 100%);z-index:-2;}
+/* Green halftone bg like RST */
+body { background: #4aaa20; overflow: hidden; }
+.halftone {
+  position:fixed;inset:0;z-index:0;
+  background-image:radial-gradient(circle,rgba(0,0,0,0.13) 1.5px,transparent 1.5px);
+  background-size:12px 12px;pointer-events:none;
+}
+.vignette {
+  position:fixed;inset:0;z-index:0;
+  background:radial-gradient(ellipse at 50% 50%,transparent 30%,rgba(0,0,0,0.4) 100%);
+  pointer-events:none;
+}
 
 .create-page {
+  position:relative;z-index:1;
   width:100vw;height:100vh;
   display:flex;
   align-items:center;
   justify-content:center;
-  gap:clamp(12px,2.5vw,32px);
+  gap:clamp(12px,3vw,40px);
   padding:16px;
-  overflow:hidden;
 }
 
-/* LEFT: preview */
-.preview-col {
+/* ── LEFT: preview portrait, gender, swatches ── */
+.left-col {
   flex:0 0 auto;
-  display:flex;flex-direction:column;
+  display:flex;
+  flex-direction:column;
   align-items:center;
-  gap:14px;
+  gap:10px;
 }
 
-.preview-box {
-  background:rgba(10,25,50,0.8);
-  border:3px solid var(--border-col);
-  box-shadow:0 0 0 2px #0a1020,0 0 0 4px var(--border-col),4px 4px 0 rgba(0,0,0,.5);
-  padding:10px;
+/* Portrait card exactly like Retro Slam Tennis character card */
+.portrait-card {
+  background:#a8e060;
+  border:4px solid rgba(255,255,255,0.9);
+  box-shadow:0 6px 0 rgba(0,0,0,0.4), inset 0 0 0 2px rgba(255,255,255,0.2);
+  padding:8px;
   position:relative;
 }
-.preview-box canvas { display:block; image-rendering:pixelated; }
+.portrait-card canvas {
+  display:block;
+  image-rendering:pixelated;
+}
 
-.gender-row { display:flex;gap:10px;width:100%;max-width:200px; }
-.gender-row .btn { flex:1;font-size:clamp(6px,1vw,8px); }
-.gender-row .btn.active { background:#1a6a2a;border-color:#40e060;color:#80ff90;box-shadow:0 4px 0 #0a3a10; }
+/* Gender buttons */
+.gender-row {
+  display:flex;gap:8px;
+  width:100%;
+}
+.gender-row button {
+  flex:1;
+  background:rgba(30,80,10,0.65);
+  border:3px solid rgba(255,255,255,0.75);
+  box-shadow:0 4px 0 rgba(0,0,0,0.35);
+  color:#fff;
+  font-family:var(--font);
+  font-size:clamp(6px,1vw,8px);
+  padding:8px 4px;
+  cursor:pointer;
+  letter-spacing:1px;
+  transition:background 0.07s;
+}
+.gender-row button:hover  { background:rgba(50,110,20,0.85); }
+.gender-row button:active { transform:translateY(3px); }
+.gender-row button.active {
+  background:#1a7020;
+  border-color:#80ff80;
+  box-shadow:0 4px 0 #0a4010;
+  color:#90ff90;
+}
 
-/* RIGHT: form */
-.form-col {
+/* Swatch section */
+.swatch-section { width:100%; }
+.swatch-lbl {
+  font-size:clamp(5px,0.75vw,6px);
+  color:rgba(255,255,255,0.75);
+  letter-spacing:2px;
+  text-align:center;
+  margin-bottom:5px;
+}
+.swatch-row {
+  display:flex;flex-wrap:wrap;
+  gap:4px;
+  justify-content:center;
+}
+
+/* ── RIGHT: name/nation form + action buttons ── */
+.right-col {
   flex:1;
   max-width:420px;
   min-width:220px;
@@ -49,160 +103,163 @@
   gap:0;
 }
 
-.header-row {
-  display:flex;align-items:center;gap:10px;margin-bottom:16px;
+/* Header */
+.create-header {
+  display:flex;align-items:center;gap:10px;
+  margin-bottom:clamp(10px,1.8vh,16px);
 }
-.header-row h2 { font-size:clamp(8px,1.4vw,12px);color:#fff;text-shadow:2px 2px 0 var(--ice-dark); }
+.create-header h2 {
+  flex:1;
+  font-size:clamp(8px,1.4vw,12px);
+  color:#fff;
+  letter-spacing:3px;
+  text-shadow:2px 2px 0 rgba(0,0,0,0.6);
+  text-align:center;
+}
+.create-header .stars {display:flex;gap:4px;font-size:8px;}
 
-.form-grid {
+/* Form panel — dark green card */
+.form-card {
+  background:rgba(15,50,5,0.82);
+  border:4px solid rgba(255,255,255,0.8);
+  box-shadow:0 6px 0 rgba(0,0,0,0.4), inset 0 0 0 2px rgba(255,255,255,0.12);
+  padding:16px 18px;
+}
+
+.form-section-title {
+  font-size:clamp(5px,0.8vw,7px);
+  color:rgba(255,255,255,0.5);
+  letter-spacing:3px;
+  text-align:center;
+  margin-bottom:12px;
+  padding-bottom:8px;
+  border-bottom:1px solid rgba(255,255,255,0.15);
+}
+
+.name-grid {
   display:grid;
   grid-template-columns:1fr 1fr;
-  gap:10px 14px;
-  margin-bottom:14px;
+  gap:10px;
+  margin-bottom:12px;
 }
 
-.swatch-row { margin-bottom:12px; }
-.swatch-label { font-size:clamp(5px,0.8vw,7px);color:var(--text-acc);letter-spacing:1px;margin-bottom:5px; }
-.swatch-grid { display:flex;flex-wrap:wrap;gap:5px; }
-.swatch {
-  width:clamp(20px,2.5vw,26px);
-  height:clamp(20px,2.5vw,26px);
-  border:2px solid rgba(255,255,255,0.15);
-  cursor:pointer;
-  transition:border-color .1s,transform .1s;
-}
-.swatch:hover { transform:scale(1.15); }
-.swatch.active { border-color:#fff;box-shadow:0 0 0 2px var(--text-gold); }
+.nation-field { margin-bottom:0; }
 
-/* Nation picker */
-.nation-row {
-  display:flex;align-items:center;gap:8px;
-  background:rgba(255,255,255,0.92);
-  border:3px solid var(--border-col);
-  padding:6px 10px;
-  cursor:pointer;
-  position:relative;
-}
-.nation-row span { font-size:clamp(7px,1.1vw,9px);color:#0a1428;font-family:'Press Start 2P',monospace; }
-.nation-row .arrow { margin-left:auto;color:#0a1428;font-size:10px; }
-
-.nation-dropdown {
-  display:none;
-  position:absolute;
-  top:100%;left:0;right:0;
-  background:#0d1e38;
-  border:2px solid var(--border-col);
-  max-height:140px;
-  overflow-y:auto;
-  z-index:50;
-}
-.nation-dropdown.open { display:block; }
-.nation-opt {
-  padding:7px 10px;
-  font-size:clamp(6px,1vw,8px);
-  color:#cde;
-  cursor:pointer;
-  font-family:'Press Start 2P',monospace;
-}
-.nation-opt:hover { background:#1a3a5c;color:#fff; }
-.nation-opt.selected { color:var(--text-gold); }
-
-/* Bottom actions */
+/* ── Action row ── */
 .action-row {
-  display:flex;gap:10px;margin-top:14px;
+  display:flex;
+  gap:10px;
+  margin-top:12px;
 }
-.action-row .btn { flex:1; }
+.action-row .random-btn {
+  flex:1;
+  background:rgba(30,80,10,0.75);
+  border:3px solid rgba(255,255,255,0.75);
+  box-shadow:0 4px 0 rgba(0,0,0,0.35);
+  color:#fff;
+  font-family:var(--font);
+  font-size:clamp(6px,1vw,8px);
+  padding:10px 8px;
+  cursor:pointer;
+  letter-spacing:1px;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  transition:background 0.07s;
+}
+.action-row .random-btn:hover  { background:rgba(50,110,20,0.9); }
+.action-row .random-btn:active { transform:translateY(3px); }
+
+.action-row .play-btn {
+  flex:2;
+  background:#b08000;
+  border:3px solid rgba(255,255,255,0.85);
+  box-shadow:0 5px 0 #6a4800;
+  color:#f8d030;
+  font-family:var(--font);
+  font-size:clamp(8px,1.3vw,11px);
+  padding:10px 14px;
+  cursor:pointer;
+  letter-spacing:2px;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  transition:background 0.07s;
+}
+.action-row .play-btn:hover  { background:#c89010; }
+.action-row .play-btn:active { transform:translateY(4px); box-shadow:0 1px 0 #6a4800; }
 </style>
 </head>
 <body>
-<div class="rink-bg-full"></div>
 
-<div class="create-page fadeup">
+<div class="halftone"></div>
+<div class="vignette"></div>
 
-  <!-- PREVIEW -->
-  <div class="preview-col">
-    <div class="preview-box" style="background:linear-gradient(180deg,#a8dcf0,#c8eef8)">
-      <canvas id="previewCanvas" width="80" height="120"
-        style="width:clamp(80px,10vw,120px);height:auto"></canvas>
+<div class="create-page fadein">
+
+  <!-- LEFT: Preview + customization -->
+  <div class="left-col">
+    <div class="portrait-card">
+      <canvas id="previewCanvas" width="80" height="110"
+        style="width:clamp(80px,11vw,130px);height:auto"></canvas>
     </div>
 
     <div class="gender-row">
-      <button class="btn active" id="btnMale"   onclick="setGender('male')">MALE</button>
-      <button class="btn"        id="btnFemale"  onclick="setGender('female')">FEMALE</button>
+      <button id="btnMale"   class="active" onclick="setGender('male')">MALE</button>
+      <button id="btnFemale"             onclick="setGender('female')">FEMALE</button>
     </div>
 
-    <div class="swatch-row" style="text-align:center">
-      <div class="swatch-label">SKIN</div>
-      <div class="swatch-grid" id="skinSwatches"></div>
+    <div class="swatch-section">
+      <div class="swatch-lbl">SKIN</div>
+      <div class="swatch-row" id="skinSwatches"></div>
     </div>
-    <div class="swatch-row" style="text-align:center">
-      <div class="swatch-label">HAIR</div>
-      <div class="swatch-grid" id="hairSwatches"></div>
+    <div class="swatch-section">
+      <div class="swatch-lbl">HAIR</div>
+      <div class="swatch-row" id="hairSwatches"></div>
     </div>
-    <div class="swatch-row" style="text-align:center">
-      <div class="swatch-label">OUTFIT</div>
-      <div class="swatch-grid" id="outfitSwatches"></div>
+    <div class="swatch-section">
+      <div class="swatch-lbl">OUTFIT</div>
+      <div class="swatch-row" id="outfitSwatches"></div>
     </div>
   </div>
 
-  <!-- FORM -->
-  <div class="form-col">
-    <div class="header-row">
-      <button class="btn btn-sm" style="width:34px;height:34px;padding:0" onclick="location.href='career.html'">◀</button>
-      <div style="display:flex;gap:4px;font-size:10px">
-        <span class="star-r">★</span><span class="star-w">★</span><span class="star-b">★</span>
-      </div>
+  <!-- RIGHT: Form -->
+  <div class="right-col">
+    <div class="create-header">
+      <button class="rst-btn" style="padding:8px 10px;font-size:10px" onclick="location.href='career.html'">◀</button>
+      <div class="stars"><span class="st-r">★</span><span class="st-w">★</span><span class="st-b">★</span></div>
       <h2>NEW CAREER</h2>
-      <div style="display:flex;gap:4px;font-size:10px">
-        <span class="star-b">★</span><span class="star-w">★</span><span class="star-r">★</span>
-      </div>
+      <div class="stars"><span class="st-b">★</span><span class="st-w">★</span><span class="st-r">★</span></div>
+      <div style="width:44px"></div>
     </div>
 
-    <div class="panel" style="padding:14px 18px">
-      <p class="section-title" style="margin-bottom:12px">YOUR NAME</p>
-      <div class="form-grid">
+    <div class="form-card">
+      <div class="form-section-title">YOUR NAME</div>
+      <div class="name-grid">
         <div>
-          <div class="field-label">FIRST NAME</div>
+          <div class="rb-input-label">FIRST NAME</div>
           <input type="text" id="firstName" value="ALEX" maxlength="10">
         </div>
         <div>
-          <div class="field-label">LAST NAME</div>
+          <div class="rb-input-label">LAST NAME</div>
           <input type="text" id="lastName" value="FROST" maxlength="12">
         </div>
       </div>
-
-      <div style="margin-bottom:14px">
-        <div class="field-label">NATION</div>
-        <div class="nation-row" id="nationRow" onclick="toggleNation()">
-          <span id="nationFlag">🇺🇸</span>
-          <span id="nationName">USA</span>
-          <span class="arrow">▼</span>
-          <div class="nation-dropdown" id="nationDropdown"></div>
-        </div>
+      <div class="nation-field">
+        <div class="rb-input-label">NATION</div>
+        <select id="nationSelect" onchange="onNationChange()"></select>
       </div>
     </div>
 
     <div class="action-row">
-      <button class="btn btn-sm" onclick="randomize()">🎲 RANDOM</button>
-      <button class="btn btn-gold" onclick="startCareer()">PLAY ▶</button>
+      <button class="random-btn" onclick="randomize()">● RANDOM</button>
+      <button class="play-btn"   onclick="startCareer()">PLAY ▶</button>
     </div>
   </div>
 </div>
 
 <script src="js/save.js"></script>
 <script>
-// ── Data ───────────────────────────────────────────────
-const SKIN_COLORS = [
-  '#fde8c0','#f4c77c','#d4956a','#b0713a','#7a4420','#4a2510'
-];
-const HAIR_COLORS = [
-  '#f8e060','#e0a030','#b06020','#7a3a10','#3a1808','#1a1010',
-  '#aabbcc','#e88090','#60c0a0','#8060d0'
-];
-const OUTFIT_COLORS = [
-  '#e03050','#4060e0','#208040','#c0a020','#c050c0','#2090a0',
-  '#e06020','#204060','#ffffff','#202020'
-];
+// ── Data ─────────────────────────────────────────────────
+const SKINS   = ['#fde8c0','#f4c77c','#d4956a','#b0713a','#7a4420','#4a2510'];
+const HAIRS   = ['#f8e060','#e0a030','#b06020','#7a3a10','#3a1808','#1a1010','#aabbcc','#e88090','#60c0a0','#8060d0'];
+const OUTFITS = ['#e03050','#4060e0','#208040','#c0a020','#c050c0','#2090a0','#e06020','#204060','#f0f0f0','#202020'];
 const NATIONS = [
   {code:'USA',flag:'🇺🇸'},{code:'CAN',flag:'🇨🇦'},{code:'RUS',flag:'🇷🇺'},
   {code:'JPN',flag:'🇯🇵'},{code:'CHN',flag:'🇨🇳'},{code:'KOR',flag:'🇰🇷'},
@@ -210,31 +267,39 @@ const NATIONS = [
   {code:'GBR',flag:'🇬🇧'},{code:'AUS',flag:'🇦🇺'},{code:'SWE',flag:'🇸🇪'},
   {code:'FIN',flag:'🇫🇮'},{code:'NOR',flag:'🇳🇴'},{code:'ESP',flag:'🇪🇸'},
 ];
-const MALE_FIRST   = ['ALEX','RYAN','JAKE','COLE','MAX','LUCAS','DEREK','SEAN','KYLE','EVAN'];
+const MALE_FIRST   = ['ALEX','RYAN','JAKE','COLE','MAX','LUCAS','DEREK','EVAN','KYLE','SEAN'];
 const FEMALE_FIRST = ['EMMA','AVA','LILY','ZOE','CHLOE','MADISON','SOPHIA','OLIVIA','GRACE','KATE'];
 const LAST_NAMES   = ['FROST','SNOW','WINTERS','ICE','STEELE','BLAKE','CROSS','STONE','WADE','BROOKS'];
 
-let skater = {
-  gender: 'male',
-  skin: 1,
-  hair: 4,
-  outfit: 0,
-  nation: 'USA',
-  nationFlag: '🇺🇸',
-  firstName: 'ALEX',
-  lastName: 'FROST',
-};
+let sk = { gender:'male', skin:0, hair:4, outfit:0, nation:'USA', nationFlag:'🇺🇸' };
 
-// ── Build swatches ─────────────────────────────────────
-function buildSwatches(id, colors, key) {
+// Build nation select
+function buildNations(){
+  const sel = document.getElementById('nationSelect');
+  NATIONS.forEach(n=>{
+    const opt = document.createElement('option');
+    opt.value = n.code;
+    opt.textContent = `${n.flag} ${n.code}`;
+    sel.appendChild(opt);
+  });
+}
+function onNationChange(){
+  const sel = document.getElementById('nationSelect');
+  sk.nation = sel.value;
+  const n = NATIONS.find(x=>x.code===sel.value);
+  sk.nationFlag = n?.flag||'🏳';
+}
+
+// Swatches
+function buildSwatches(id, colors, key){
   const el = document.getElementById(id);
-  el.innerHTML = '';
-  colors.forEach((c, i) => {
-    const s = document.createElement('div');
-    s.className = 'swatch' + (skater[key]===i?' active':'');
-    s.style.background = c;
-    s.addEventListener('click', ()=>{
-      skater[key] = i;
+  el.innerHTML='';
+  colors.forEach((c,i)=>{
+    const s=document.createElement('div');
+    s.className='swatch'+(sk[key]===i?' active':'');
+    s.style.background=c;
+    s.addEventListener('click',()=>{
+      sk[key]=i;
       el.querySelectorAll('.swatch').forEach((x,j)=>x.classList.toggle('active',j===i));
       renderPreview();
     });
@@ -242,180 +307,109 @@ function buildSwatches(id, colors, key) {
   });
 }
 
-function initSwatches() {
-  buildSwatches('skinSwatches',  SKIN_COLORS,   'skin');
-  buildSwatches('hairSwatches',  HAIR_COLORS,   'hair');
-  buildSwatches('outfitSwatches',OUTFIT_COLORS, 'outfit');
-}
+function buildAll(){ buildSwatches('skinSwatches',SKINS,'skin'); buildSwatches('hairSwatches',HAIRS,'hair'); buildSwatches('outfitSwatches',OUTFITS,'outfit'); }
 
-// ── Nation dropdown ────────────────────────────────────
-function buildNationDropdown() {
-  const dd = document.getElementById('nationDropdown');
-  dd.innerHTML = '';
-  NATIONS.forEach(n => {
-    const opt = document.createElement('div');
-    opt.className = 'nation-opt' + (n.code===skater.nation?' selected':'');
-    opt.textContent = `${n.flag} ${n.code}`;
-    opt.addEventListener('click', e => {
-      e.stopPropagation();
-      skater.nation = n.code;
-      skater.nationFlag = n.flag;
-      document.getElementById('nationFlag').textContent = n.flag;
-      document.getElementById('nationName').textContent = n.code;
-      dd.querySelectorAll('.nation-opt').forEach((x,j)=>x.classList.toggle('selected',NATIONS[j].code===n.code));
-      toggleNation();
-    });
-    dd.appendChild(opt);
-  });
-}
-
-let nationOpen = false;
-function toggleNation(){
-  nationOpen = !nationOpen;
-  document.getElementById('nationDropdown').classList.toggle('open', nationOpen);
-}
-document.addEventListener('click', e=>{
-  if(!document.getElementById('nationRow').contains(e.target)){
-    nationOpen=false;
-    document.getElementById('nationDropdown').classList.remove('open');
-  }
-});
-
-// ── Gender ─────────────────────────────────────────────
+// Gender
 function setGender(g){
-  skater.gender = g;
-  document.getElementById('btnMale').classList.toggle('active', g==='male');
-  document.getElementById('btnFemale').classList.toggle('active', g==='female');
+  sk.gender=g;
+  document.getElementById('btnMale').classList.toggle('active',g==='male');
+  document.getElementById('btnFemale').classList.toggle('active',g==='female');
   renderPreview();
 }
 
-// ── Random ─────────────────────────────────────────────
+// Random
 function randomize(){
-  const g = Math.random()<0.5?'male':'female';
-  skater.gender = g;
-  skater.skin   = Math.floor(Math.random()*SKIN_COLORS.length);
-  skater.hair   = Math.floor(Math.random()*HAIR_COLORS.length);
-  skater.outfit = Math.floor(Math.random()*OUTFIT_COLORS.length);
-  const nat = NATIONS[Math.floor(Math.random()*NATIONS.length)];
-  skater.nation = nat.code; skater.nationFlag = nat.flag;
-  const fn = g==='male'
-    ? MALE_FIRST[Math.floor(Math.random()*MALE_FIRST.length)]
-    : FEMALE_FIRST[Math.floor(Math.random()*FEMALE_FIRST.length)];
-  const ln = LAST_NAMES[Math.floor(Math.random()*LAST_NAMES.length)];
-  document.getElementById('firstName').value = fn;
-  document.getElementById('lastName').value  = ln;
-  document.getElementById('nationFlag').textContent = nat.flag;
-  document.getElementById('nationName').textContent = nat.code;
-  document.getElementById('btnMale').classList.toggle('active', g==='male');
-  document.getElementById('btnFemale').classList.toggle('active', g==='female');
-  initSwatches();
-  buildNationDropdown();
+  const g=Math.random()<0.5?'male':'female';
+  sk.gender=g;
+  sk.skin=Math.floor(Math.random()*SKINS.length);
+  sk.hair=Math.floor(Math.random()*HAIRS.length);
+  sk.outfit=Math.floor(Math.random()*OUTFITS.length);
+  const nat=NATIONS[Math.floor(Math.random()*NATIONS.length)];
+  sk.nation=nat.code; sk.nationFlag=nat.flag;
+  const fn=(g==='male'?MALE_FIRST:FEMALE_FIRST)[Math.floor(Math.random()*10)];
+  const ln=LAST_NAMES[Math.floor(Math.random()*LAST_NAMES.length)];
+  document.getElementById('firstName').value=fn;
+  document.getElementById('lastName').value=ln;
+  document.getElementById('nationSelect').value=nat.code;
+  document.getElementById('btnMale').classList.toggle('active',g==='male');
+  document.getElementById('btnFemale').classList.toggle('active',g==='female');
+  buildAll();
   renderPreview();
 }
 
-// ── Preview canvas ─────────────────────────────────────
-const pc = document.getElementById('previewCanvas');
-const px = pc.getContext('2d');
-px.imageSmoothingEnabled = false;
+// ── Preview ──────────────────────────────────────────────
+const pc=document.getElementById('previewCanvas');
+const px=pc.getContext('2d');
+px.imageSmoothingEnabled=false;
 
 function renderPreview(){
-  px.clearRect(0,0,80,120);
-  const skin   = SKIN_COLORS[skater.skin];
-  const hair   = HAIR_COLORS[skater.hair];
-  const outfit = OUTFIT_COLORS[skater.outfit];
-  const male   = skater.gender==='male';
+  px.clearRect(0,0,80,110);
+  const skin=SKINS[sk.skin], hair=HAIRS[sk.hair], outfit=OUTFITS[sk.outfit];
+  const f=sk.gender==='female';
 
   // Shadow
-  px.fillStyle='rgba(30,80,120,0.2)';
-  px.fillRect(22,112,36,5);
+  px.fillStyle='rgba(60,140,30,0.3)';
+  px.fillRect(22,102,36,5);
 
-  if(male){
-    // Pants / legs
-    px.fillStyle='#1a2a4a';
-    px.fillRect(28,88,10,22); px.fillRect(42,88,10,22);
-    // Body
-    px.fillStyle=outfit;
-    px.fillRect(25,58,30,32);
-    // Arms
-    px.fillStyle=outfit;
-    px.fillRect(12,60,13,7); px.fillRect(55,60,13,7);
-    // Gloves
-    px.fillStyle='#fff';
-    px.fillRect(9,60,6,6); px.fillRect(65,60,6,6);
-    // Head
-    px.fillStyle=skin;
-    px.fillRect(29,38,22,22);
-    // Hair
-    px.fillStyle=hair;
-    px.fillRect(29,36,22,8);
-    // Eyes
-    px.fillStyle='#1a0a00';
-    px.fillRect(33,45,4,4); px.fillRect(43,45,4,4);
-    // Boots
-    px.fillStyle='#fff';
-    px.fillRect(26,108,14,6); px.fillRect(40,108,14,6);
-    // Blades
-    px.fillStyle='rgba(190,220,255,0.9)';
-    px.fillRect(24,114,18,2); px.fillRect(38,114,18,2);
-  } else {
-    // Skirt
-    px.fillStyle=outfit;
-    px.fillRect(22,88,36,14);
+  if(f){
+    // Female skater
     // Legs
-    px.fillStyle=skin;
-    px.fillRect(28,100,10,16); px.fillRect(42,100,10,16);
+    px.fillStyle=skin; px.fillRect(28,84,8,16); px.fillRect(44,84,8,16);
+    // Skirt
+    px.fillStyle=outfit; px.fillRect(22,76,36,10);
     // Body
-    px.fillStyle=outfit;
-    px.fillRect(25,58,30,32);
+    px.fillStyle=outfit; px.fillRect(24,52,32,26);
     // Arms
-    px.fillStyle=outfit;
-    px.fillRect(10,62,15,7); px.fillRect(55,62,15,7);
-    // Gloves
-    px.fillStyle='#fff';
-    px.fillRect(7,62,6,6); px.fillRect(67,62,6,6);
+    px.fillStyle=outfit; px.fillRect(10,56,14,6); px.fillRect(56,56,14,6);
+    px.fillStyle='#fff'; px.fillRect(7,56,6,5); px.fillRect(67,56,6,5);
     // Head
-    px.fillStyle=skin;
-    px.fillRect(29,38,22,22);
-    // Hair (longer for female)
-    px.fillStyle=hair;
-    px.fillRect(29,34,22,10);
-    px.fillRect(27,44,4,16); // side hair
-    px.fillRect(49,44,4,16);
+    px.fillStyle=skin; px.fillRect(29,34,22,20);
+    // Hair
+    px.fillStyle=hair; px.fillRect(29,30,22,8); px.fillRect(27,38,4,16); px.fillRect(49,38,4,16);
     // Eyes
-    px.fillStyle='#1a0a00';
-    px.fillRect(33,45,4,4); px.fillRect(43,45,4,4);
+    px.fillStyle='rgba(0,0,0,0.7)'; px.fillRect(33,41,3,3); px.fillRect(44,41,3,3);
     // Boots
-    px.fillStyle='#fff';
-    px.fillRect(26,114,14,6); px.fillRect(40,114,14,6);
+    px.fillStyle='#f0f0f8'; px.fillRect(26,100,12,6); px.fillRect(42,100,12,6);
     // Blades
-    px.fillStyle='rgba(190,220,255,0.9)';
-    px.fillRect(24,120,18,2); px.fillRect(38,120,18,2);
+    px.fillStyle='rgba(190,220,255,0.9)'; px.fillRect(24,106,16,2); px.fillRect(40,106,16,2);
+  } else {
+    // Male skater
+    // Pants
+    px.fillStyle='#1a2050'; px.fillRect(26,72,13,26); px.fillRect(42,72,13,26);
+    // Body
+    px.fillStyle=outfit; px.fillRect(24,48,32,26);
+    // Arms
+    px.fillStyle=outfit; px.fillRect(10,52,14,7); px.fillRect(56,52,14,7);
+    px.fillStyle='#fff'; px.fillRect(7,53,5,5); px.fillRect(68,53,5,5);
+    // Head
+    px.fillStyle=skin; px.fillRect(29,28,22,22);
+    // Hair
+    px.fillStyle=hair; px.fillRect(29,24,22,8);
+    // Eyes
+    px.fillStyle='rgba(0,0,0,0.7)'; px.fillRect(33,35,3,3); px.fillRect(44,35,3,3);
+    // Boots
+    px.fillStyle='#f0f0f8'; px.fillRect(24,98,14,6); px.fillRect(42,98,14,6);
+    // Blades
+    px.fillStyle='rgba(190,220,255,0.9)'; px.fillRect(22,104,18,2); px.fillRect(40,104,18,2);
   }
 }
 
-// ── Start ──────────────────────────────────────────────
+// Start career
 function startCareer(){
-  const fn = document.getElementById('firstName').value.trim().toUpperCase() || 'ALEX';
-  const ln = document.getElementById('lastName').value.trim().toUpperCase()  || 'FROST';
-  const slot = parseInt(sessionStorage.getItem('activeSlot')||'1');
-
-  SaveSystem.newSave(slot, {
-    firstName: fn,
-    lastName:  ln,
-    nation:    skater.nation,
-    nationFlag:skater.nationFlag,
-    gender:    skater.gender,
-    skin:      skater.skin,
-    hair:      skater.hair,
-    outfit:    skater.outfit,
+  const fn=document.getElementById('firstName').value.trim().toUpperCase()||'ALEX';
+  const ln=document.getElementById('lastName').value.trim().toUpperCase()||'FROST';
+  const slot=parseInt(sessionStorage.getItem('activeSlot')||'1');
+  SaveSystem.newSave(slot,{
+    firstName:fn, lastName:ln,
+    nation:sk.nation, nationFlag:sk.nationFlag,
+    gender:sk.gender, skin:sk.skin, hair:sk.hair, outfit:sk.outfit,
   });
-
-  location.href = 'game.html';
+  location.href='game.html';
 }
 
-// ── Init ───────────────────────────────────────────────
-initSwatches();
-buildNationDropdown();
+// Init
+buildNations();
+buildAll();
 renderPreview();
 </script>
 </body>

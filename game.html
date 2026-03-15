@@ -6,134 +6,118 @@
 <title>Retro Ice – Skate!</title>
 <link rel="stylesheet" href="css/style.css">
 <style>
-html, body { overflow:hidden; background:#08111e; }
+html, body { overflow:hidden; background:#0a0a0a; }
 
 .game-page {
-  position:relative;
-  width:100vw;
-  height:100vh;
-  display:flex;
-  flex-direction:column;
+  position:relative; width:100vw; height:100vh;
+  display:flex; flex-direction:column;
 }
 
-/* HUD top bar */
+/* HUD — Retro Bowl dark bar style */
 #hud {
-  flex:0 0 auto;
-  height:40px;
-  background:#08111e;
-  border-bottom:3px solid #4ac8f0;
-  display:flex;
-  align-items:center;
-  padding:0 14px;
-  gap:clamp(8px,2vw,24px);
+  flex:0 0 auto; height:44px;
+  background:#0a0a10;
+  border-bottom:3px solid #fff;
+  display:flex; align-items:center;
+  padding:0 16px; gap:clamp(8px,2vw,28px);
   z-index:20;
+  box-shadow:0 2px 0 rgba(0,0,0,0.5);
 }
-.hud-block { display:flex;flex-direction:column;gap:1px; }
-.hud-label { font-size:clamp(4px,0.7vw,5px); color:#4ac8f0; letter-spacing:1px; }
-.hud-val   { font-size:clamp(8px,1.3vw,11px); color:#fff; }
-.hud-sep   { flex:1; }
-.hud-name  { font-size:clamp(5px,0.9vw,7px); color:#aabbcc; letter-spacing:1px; }
+.hb { display:flex;flex-direction:column;gap:2px; }
+.hl { font-size:clamp(4px,0.6vw,5px); color:rgba(255,255,255,0.45); letter-spacing:2px; }
+.hv { font-size:clamp(9px,1.4vw,12px); color:#fff; }
+.hv-gold  { color:#f0c030!important; }
+.hv-red   { color:#ff7080!important; }
+.hv-blue  { color:#80c0ff!important; }
+.h-sep    { flex:1; }
+.h-name   { font-size:clamp(5px,0.85vw,7px); color:rgba(200,220,255,0.7); letter-spacing:1px; max-width:160px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 
-.hud-combo-val { color:#ffd700!important; }
-.hud-time-val  { color:#ff8080!important; }
-
-/* Canvas fills remaining space */
+/* Canvas */
 #gameCanvas {
   flex:1 1 auto;
   width:100%;
-  height:calc(100vh - 40px - 32px);
+  height:calc(100vh - 44px - 32px);
   display:block;
   image-rendering:pixelated;
 }
 
-/* Controls hint bar bottom */
+/* Controls bar */
 #ctrlBar {
-  flex:0 0 auto;
-  height:32px;
-  background:#08111e;
-  border-top:2px solid rgba(74,200,240,0.3);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:clamp(6px,1.5vw,20px);
-  padding:0 12px;
+  flex:0 0 auto; height:32px;
+  background:#0a0a10;
+  border-top:2px solid rgba(255,255,255,0.2);
+  display:flex; align-items:center;
+  justify-content:center; gap:clamp(6px,2vw,24px);
+  padding:0 14px;
 }
-.ctrl-hint { font-size:clamp(4px,0.7vw,6px); color:#556677; }
-.ctrl-hint span { color:#ffd700; }
+.ch { font-size:clamp(4px,0.65vw,5px); color:rgba(255,255,255,0.3); letter-spacing:1px; }
+.ch span { color:#f0c030; }
+.ch.tip  { color:rgba(100,200,255,0.5); }
 
-/* Menu overlay (Escape) */
-#menuOverlay {
-  display:none;
-  position:fixed;inset:0;
-  background:rgba(0,0,0,0.75);
-  z-index:50;
-  align-items:center;
-  justify-content:center;
+/* Pause overlay */
+#pauseOverlay {
+  display:none; position:fixed; inset:0;
+  background:rgba(0,0,0,0.78); z-index:100;
+  align-items:center; justify-content:center;
 }
-#menuOverlay.show { display:flex; }
-#menuBox {
-  text-align:center;
-  padding:30px 36px;
-  min-width:240px;
+#pauseOverlay.show { display:flex; }
+.pause-box {
+  background:var(--rb-panel);
+  border:4px solid #fff;
+  box-shadow:0 8px 0 var(--rb-btn-sh), 4px 4px 0 rgba(0,0,0,0.5);
+  padding:28px 36px; text-align:center; min-width:220px;
 }
-#menuBox h3 { font-size:clamp(9px,1.5vw,12px);color:#fff;margin-bottom:20px; }
-.menu-choices { display:flex;flex-direction:column;gap:10px; }
+.pause-box h3 { font-size:clamp(10px,1.6vw,13px); color:#fff; margin-bottom:20px; letter-spacing:3px; }
+.pause-btns { display:flex; flex-direction:column; gap:10px; }
 </style>
 </head>
 <body>
-
 <div class="game-page">
-  <!-- HUD -->
   <div id="hud">
-    <div class="hud-block">
-      <div class="hud-label">SKATER</div>
-      <div class="hud-val hud-name" id="hudName">—</div>
+    <div class="hb">
+      <div class="hl">SKATER</div>
+      <div class="hv h-name" id="hudName">—</div>
     </div>
-    <div class="hud-sep"></div>
-    <div class="hud-block">
-      <div class="hud-label">SCORE</div>
-      <div class="hud-val" id="hudScore">0</div>
+    <div class="h-sep"></div>
+    <div class="hb">
+      <div class="hl">SCORE</div>
+      <div class="hv" id="hudScore">0</div>
     </div>
-    <div class="hud-block">
-      <div class="hud-label">COMBO</div>
-      <div class="hud-val hud-combo-val" id="hudCombo">x1</div>
+    <div class="hb">
+      <div class="hl">COMBO</div>
+      <div class="hv hv-gold" id="hudCombo">x1</div>
     </div>
-    <div class="hud-block">
-      <div class="hud-label">TIME</div>
-      <div class="hud-val hud-time-val" id="hudTime">90</div>
+    <div class="hb">
+      <div class="hl">TIME</div>
+      <div class="hv hv-red" id="hudTime">90</div>
     </div>
-    <div class="hud-block">
-      <div class="hud-label">LEVEL</div>
-      <div class="hud-val" id="hudLevel">1</div>
+    <div class="hb">
+      <div class="hl">LEVEL</div>
+      <div class="hv hv-blue" id="hudLevel">1</div>
     </div>
-    <div class="hud-sep"></div>
-    <button class="btn btn-sm" onclick="toggleMenu()" style="height:26px;padding:0 10px;font-size:6px">
-      ☰ MENU
-    </button>
+    <div class="h-sep"></div>
+    <button class="rb-btn rb-btn-sm" onclick="togglePause()" style="height:28px;padding:0 12px;font-size:6px">☰ MENU</button>
   </div>
 
-  <!-- Game canvas -->
   <canvas id="gameCanvas"></canvas>
 
-  <!-- Controls bar -->
   <div id="ctrlBar">
-    <span class="ctrl-hint"><span>← →</span> SKATE</span>
-    <span class="ctrl-hint"><span>Z</span> JUMP</span>
-    <span class="ctrl-hint"><span>X</span> SPIN</span>
-    <span class="ctrl-hint"><span>SPACE</span> POSE</span>
-    <span class="ctrl-hint"><span>ESC</span> MENU</span>
-    <span class="ctrl-hint" style="color:#4ac8f0">CHAIN MOVES FOR COMBOS!</span>
+    <span class="ch"><span>← →</span> SKATE</span>
+    <span class="ch"><span>Z</span> JUMP</span>
+    <span class="ch"><span>X</span> SPIN</span>
+    <span class="ch"><span>SPACE</span> POSE</span>
+    <span class="ch"><span>ESC</span> PAUSE</span>
+    <span class="ch tip">CHAIN MOVES FOR COMBOS!</span>
   </div>
 </div>
 
-<!-- Pause / Menu overlay -->
-<div id="menuOverlay">
-  <div class="panel" id="menuBox">
+<div id="pauseOverlay">
+  <div class="pause-box">
     <h3>PAUSED</h3>
-    <div class="menu-choices">
-      <button class="btn btn-lg" onclick="toggleMenu()">▶ RESUME</button>
-      <button class="btn" onclick="location.href='career.html'">⬅ CAREER</button>
-      <button class="btn" onclick="location.href='index.html'">🏠 TITLE</button>
+    <div class="pause-btns">
+      <button class="rb-btn rb-btn-lg" onclick="togglePause()">▶ RESUME</button>
+      <button class="rb-btn"           onclick="location.href='career.html'">⬅ CAREER</button>
+      <button class="rb-btn"           onclick="location.href='index.html'">🏠 TITLE</button>
     </div>
   </div>
 </div>
@@ -141,14 +125,12 @@ html, body { overflow:hidden; background:#08111e; }
 <script src="js/save.js"></script>
 <script src="js/game.js"></script>
 <script>
-let menuOpen = false;
-function toggleMenu(){
-  menuOpen = !menuOpen;
-  document.getElementById('menuOverlay').classList.toggle('show', menuOpen);
+let paused = false;
+function togglePause(){
+  paused = !paused;
+  document.getElementById('pauseOverlay').classList.toggle('show', paused);
 }
-document.addEventListener('keydown', e=>{
-  if(e.code==='Escape') toggleMenu();
-});
+document.addEventListener('keydown', e=>{ if(e.code==='Escape') togglePause(); });
 </script>
 </body>
 </html>

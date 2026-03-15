@@ -1,324 +1,289 @@
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
 :root {
-  --ice-blue: #4ac8f0;
-  --ice-dark: #1a3a5c;
-  --ice-mid:  #2a5a8c;
-  --ice-light:#8de0f8;
-  --ice-white:#e8f8ff;
-  --rink-bg:  #c8eef8;
-  --btn-main: #2a7abf;
-  --btn-dark: #1a4a7c;
-  --btn-highlight: #5aaee8;
-  --text-white: #ffffff;
-  --text-gold:  #ffd700;
-  --text-acc:   #4ac8f0;
-  --panel-bg:   rgba(10,20,40,0.88);
-  --border-col: #4ac8f0;
-  --red-star:   #e03050;
-  --blue-star:  #4060c0;
-  --silver:     #c0d0e0;
+  /* Retro Bowl palette */
+  --rb-black:   #0a0a0a;
+  --rb-blue:    #3060c8;
+  --rb-blue2:   #4080e0;
+  --rb-panel:   #3868d0;
+  --rb-btn:     #3060c8;
+  --rb-btn-hi:  #4888f0;
+  --rb-btn-sh:  #1a3870;
+  --rb-border:  #ffffff;
+  --rb-text:    #ffffff;
+  --rb-gold:    #f0c030;
+  --rb-red:     #c82030;
+  --rb-green:   #28a030;
+  --rb-grey:    #606880;
+  --rb-grey2:   #404858;
+
+  /* Retro Slam Tennis green palette (used for career/create) */
+  --rst-green:  #4aa020;
+  --rst-green2: #5ac030;
+  --rst-green3: #3a8018;
+  --rst-panel:  #3a8018;
+  --rst-light:  #70c840;
+
+  --font: 'Press Start 2P', monospace;
 }
 
 * { margin:0; padding:0; box-sizing:border-box; image-rendering:pixelated; }
 
 html, body {
   width:100%; height:100%;
-  background:#0a1020;
-  font-family:'Press Start 2P', monospace;
+  font-family: var(--font);
   overflow:hidden;
-  cursor:default;
+  background: var(--rb-black);
 }
 
-/* ── Pixel background dots ── */
-body::before {
-  content:'';
-  position:fixed; inset:0;
-  background-image: radial-gradient(circle, rgba(74,200,240,0.06) 1px, transparent 1px);
-  background-size:16px 16px;
+/* ── HALFTONE DOT TEXTURE (like Retro Slam Tennis bg) ── */
+.bg-dots {
+  position:fixed; inset:0; z-index:0;
+  background-image: radial-gradient(circle, rgba(255,255,255,0.07) 1px, transparent 1px);
+  background-size: 10px 10px;
   pointer-events:none;
-  z-index:0;
 }
 
-/* ── Full-screen page wrapper ── */
-.page {
-  position:relative;
-  width:100vw; height:100vh;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  z-index:1;
+/* ── BLACK BG (Retro Bowl style) ── */
+.bg-black {
+  position:fixed; inset:0; z-index:-1;
+  background: var(--rb-black);
 }
 
-/* ── Landscape rink background ── */
-.rink-bg {
-  position:fixed; inset:0;
-  background: linear-gradient(180deg,
-    #0a1428 0%,
-    #0e1e3a 18%,
-    #1a3a5c 30%,
-    #c8eef8 30%,
-    #daf4ff 52%,
-    #b8e4f4 100%
+/* ── GREEN BG (Retro Slam style) ── */
+.bg-green {
+  position:fixed; inset:0; z-index:-1;
+  background: radial-gradient(ellipse at 50% 40%,
+    #5abe28 0%,
+    #4aaa20 35%,
+    #3a9018 60%,
+    #2a7010 100%
   );
-  z-index:-1;
-}
-.rink-bg::after {
-  content:'';
-  position:absolute;
-  left:0; right:0;
-  top:30%;
-  height:70%;
-  background:
-    repeating-linear-gradient(
-      90deg,
-      transparent 0px,
-      transparent 78px,
-      rgba(150,210,240,0.12) 78px,
-      rgba(150,210,240,0.12) 80px
-    );
 }
 
-/* ── Stars header ── */
-.stars-header {
-  display:flex;
-  align-items:center;
-  gap:10px;
-  margin-bottom:16px;
-  font-size:10px;
-}
-.star-r { color: var(--red-star); }
-.star-w { color: #ffffff; }
-.star-b { color: var(--blue-star); }
-.stars-header h1 {
-  font-size:clamp(10px, 2vw, 16px);
-  color:#fff;
-  letter-spacing:3px;
-  text-shadow: 2px 2px 0 var(--ice-dark);
+/* ─────────────────────────────────────────────
+   RETRO BOWL STYLE: chunky dark blue panel
+───────────────────────────────────────────── */
+.rb-panel {
+  background: var(--rb-panel);
+  border: 4px solid var(--rb-border);
+  box-shadow:
+    inset 0 0 0 2px rgba(255,255,255,0.15),
+    6px 6px 0 rgba(0,0,0,0.6);
+  position: relative;
 }
 
-/* ── Panel / card ── */
-.panel {
-  background: var(--panel-bg);
-  border: 3px solid var(--border-col);
-  box-shadow: 0 0 0 2px #0a1020, 0 0 0 4px var(--border-col), 4px 4px 0 rgba(0,0,0,0.5);
-  padding:20px 24px;
-  position:relative;
-}
-.panel::before {
-  content:'';
-  position:absolute;
-  inset:3px;
-  border:1px solid rgba(74,200,240,0.25);
-  pointer-events:none;
+/* Padded version */
+.rb-panel-pad { padding: 20px 24px; }
+
+/* Section label — thin line above title, like Retro Bowl */
+.rb-section-label {
+  font-size: clamp(5px, 0.8vw, 7px);
+  color: rgba(255,255,255,0.55);
+  letter-spacing: 3px;
+  text-align: center;
+  margin-bottom: 6px;
 }
 
-/* ── Buttons ── */
-.btn {
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  gap:8px;
-  background: var(--btn-main);
+/* ─────────────────────────────────────────────
+   RETRO BOWL STYLE BUTTON — white border, 3d shadow
+───────────────────────────────────────────── */
+.rb-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-family: var(--font);
+  font-size: clamp(8px, 1.3vw, 11px);
   color: #fff;
-  border: 3px solid var(--btn-highlight);
-  box-shadow: 0 4px 0 var(--btn-dark), 2px 2px 0 rgba(0,0,0,0.4);
-  padding:10px 18px;
-  font-family:'Press Start 2P', monospace;
-  font-size:clamp(7px,1.2vw,10px);
-  cursor:pointer;
-  transition: transform 0.06s, box-shadow 0.06s;
-  text-decoration:none;
-  text-align:center;
-  letter-spacing:1px;
-  line-height:1.4;
-  white-space:nowrap;
+  background: var(--rb-btn);
+  border: 3px solid #fff;
+  box-shadow: 0 5px 0 var(--rb-btn-sh), 3px 3px 0 rgba(0,0,0,0.4);
+  padding: 11px 20px;
+  cursor: pointer;
+  letter-spacing: 1px;
+  text-decoration: none;
+  text-align: center;
+  line-height: 1.3;
+  transition: background 0.07s;
+  white-space: nowrap;
+  user-select: none;
 }
-.btn:hover  { background: var(--btn-highlight); }
-.btn:active { transform:translateY(3px); box-shadow:0 1px 0 var(--btn-dark); }
+.rb-btn:hover  { background: var(--rb-btn-hi); }
+.rb-btn:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--rb-btn-sh); }
 
-.btn-gold {
-  background:#9a7000;
-  border-color: var(--text-gold);
-  box-shadow: 0 4px 0 #5a4000;
-  color: var(--text-gold);
+.rb-btn-gold {
+  background: #b08000;
+  border-color: #fff;
+  box-shadow: 0 5px 0 #6a4800, 3px 3px 0 rgba(0,0,0,0.4);
+  color: var(--rb-gold);
 }
-.btn-gold:hover { background:#c09020; }
+.rb-btn-gold:hover { background: #c89010; }
 
-.btn-danger {
-  background:#7a1030;
-  border-color:#e03050;
-  box-shadow:0 4px 0 #3a0010;
-  color:#ff6080;
+.rb-btn-red {
+  background: var(--rb-red);
+  border-color: #fff;
+  box-shadow: 0 5px 0 #6a0010, 3px 3px 0 rgba(0,0,0,0.4);
+  color: #fff;
 }
-.btn-danger:hover { background:#a01840; }
+.rb-btn-red:hover { background: #e03040; }
 
-.btn-sm { font-size:clamp(6px,1vw,8px); padding:7px 12px; }
-.btn-lg { font-size:clamp(9px,1.5vw,13px); padding:13px 28px; }
-.btn-sq { width:42px; height:42px; padding:0; font-size:12px; }
-
-/* ── Field label/input ── */
-.field-label {
-  font-size:clamp(6px,1vw,8px);
-  color: var(--text-acc);
-  letter-spacing:1px;
-  margin-bottom:5px;
-}
-.field-wrap { margin-bottom:14px; }
-
-input[type=text] {
-  background:rgba(255,255,255,0.92);
-  border:3px solid var(--border-col);
-  color:#0a1428;
-  font-family:'Press Start 2P', monospace;
-  font-size:clamp(7px,1.1vw,9px);
-  padding:8px 10px;
-  width:100%;
-  outline:none;
-  box-shadow:inset 2px 2px 0 rgba(0,0,0,0.15);
-}
-input[type=text]:focus { border-color:var(--text-gold); }
-
-/* ── Toggle pair ── */
-.toggle-pair { display:flex; gap:8px; }
-.toggle-pair .btn { flex:1; }
-.toggle-pair .btn.active {
-  background: #1a6a2a;
-  border-color:#40e060;
-  box-shadow: 0 4px 0 #0a3a10;
-  color:#80ff90;
+.rb-btn-grey {
+  background: var(--rb-grey2);
+  border-color: rgba(255,255,255,0.4);
+  box-shadow: 0 5px 0 #202430, 3px 3px 0 rgba(0,0,0,0.4);
+  color: rgba(255,255,255,0.4);
+  cursor: default;
 }
 
-/* ── Skater canvas preview ── */
-#skaterPreview {
-  display:block;
-  margin:0 auto;
-  image-rendering:pixelated;
+.rb-btn-green {
+  background: var(--rst-green);
+  border-color: #fff;
+  box-shadow: 0 5px 0 var(--rst-green3), 3px 3px 0 rgba(0,0,0,0.4);
+  color: #fff;
+}
+.rb-btn-green:hover { background: var(--rst-green2); }
+
+.rb-btn-sm  { font-size: clamp(6px, 1vw, 8px); padding: 8px 14px; }
+.rb-btn-lg  { font-size: clamp(10px, 1.6vw, 14px); padding: 14px 30px; }
+.rb-btn-sq  { width: 42px; height: 42px; padding: 0; font-size: 14px; }
+
+/* ─────────────────────────────────────────────
+   STARS HEADER — exactly like Retro Bowl
+───────────────────────────────────────────── */
+.rb-stars-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 9px;
+}
+.rb-stars-header h2 {
+  font-size: clamp(9px, 1.5vw, 12px);
+  color: #fff;
+  letter-spacing: 3px;
+  text-shadow: 2px 2px 0 rgba(0,0,0,0.7);
+}
+.st-r { color: #e03030; }
+.st-w { color: #ffffff; }
+.st-b { color: #4060d0; }
+
+/* ─────────────────────────────────────────────
+   RETRO SLAM TENNIS STYLE: green button
+───────────────────────────────────────────── */
+.rst-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--font);
+  font-size: clamp(9px, 1.4vw, 12px);
+  color: #fff;
+  background: var(--rst-green);
+  border: 4px solid rgba(255,255,255,0.9);
+  box-shadow: 0 6px 0 var(--rst-green3), 3px 3px 0 rgba(0,0,0,0.35);
+  padding: 12px 22px;
+  cursor: pointer;
+  letter-spacing: 2px;
+  text-decoration: none;
+  text-align: center;
+  line-height: 1.3;
+  transition: background 0.07s;
+  white-space: nowrap;
+  user-select: none;
+}
+.rst-btn:hover  { background: var(--rst-green2); }
+.rst-btn:active { transform: translateY(5px); box-shadow: 0 1px 0 var(--rst-green3); }
+
+.rst-btn-gold {
+  background: #b08000;
+  border-color: rgba(255,255,255,0.9);
+  box-shadow: 0 6px 0 #6a4800, 3px 3px 0 rgba(0,0,0,0.35);
+  color: var(--rb-gold);
+}
+.rst-btn-gold:hover { background: #c89010; }
+
+/* ─────────────────────────────────────────────
+   TEXT INPUT (RST style — white box)
+───────────────────────────────────────────── */
+.rb-input-label {
+  font-size: clamp(5px, 0.8vw, 7px);
+  color: rgba(255,255,255,0.7);
+  letter-spacing: 2px;
+  margin-bottom: 5px;
 }
 
-/* ── Scrollbar ── */
-::-webkit-scrollbar { width:6px; }
-::-webkit-scrollbar-track { background:#0a1020; }
-::-webkit-scrollbar-thumb { background:var(--btn-main); }
+input[type=text], select {
+  background: #fff;
+  border: 3px solid #fff;
+  box-shadow: inset 2px 2px 0 rgba(0,0,0,0.12), 0 3px 0 rgba(0,0,0,0.5);
+  color: #0a0a18;
+  font-family: var(--font);
+  font-size: clamp(7px, 1.1vw, 9px);
+  padding: 8px 10px;
+  width: 100%;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+}
+input[type=text]:focus { border-color: var(--rb-gold); }
+select { cursor: pointer; }
+select:focus { border-color: var(--rb-gold); }
 
-/* ── Slot entry ── */
-.slot-entry {
-  display:flex;
-  align-items:center;
-  gap:10px;
-  margin-bottom:14px;
-}
-.slot-label {
-  font-size:clamp(5px,0.8vw,7px);
-  color:var(--text-acc);
-  letter-spacing:1px;
-  text-align:center;
-  margin-bottom:4px;
-}
-.slot-btn {
-  flex:1;
-  min-width:0;
-}
-.slot-btn .skater-name { font-size:clamp(8px,1.3vw,11px); color:#fff; }
-.slot-btn .skater-sub  { font-size:clamp(5px,0.8vw,7px); color:var(--ice-light); margin-top:4px; }
-
-/* ── Nation flag text ── */
-.nation-display {
-  display:flex; align-items:center; gap:8px;
-}
-
-/* ── Swatch grid ── */
-.swatch-grid {
-  display:flex; flex-wrap:wrap; gap:5px;
-}
+/* ─────────────────────────────────────────────
+   SWATCH
+───────────────────────────────────────────── */
 .swatch {
-  width:24px; height:24px;
-  border:2px solid transparent;
-  cursor:pointer;
-  transition:border-color 0.1s;
+  width: clamp(20px, 2.2vw, 26px);
+  height: clamp(20px, 2.2vw, 26px);
+  border: 3px solid rgba(255,255,255,0.25);
+  cursor: pointer;
+  box-shadow: 2px 2px 0 rgba(0,0,0,0.4);
+  transition: transform 0.08s;
 }
-.swatch.active { border-color:#fff; box-shadow:0 0 0 2px var(--text-gold); }
+.swatch:hover  { transform: scale(1.15); border-color: rgba(255,255,255,0.7); }
+.swatch.active { border-color: #fff; box-shadow: 0 0 0 2px var(--rb-gold), 2px 2px 0 rgba(0,0,0,0.4); }
 
-/* ── Section title ── */
-.section-title {
-  font-size:clamp(5px,0.85vw,7px);
-  color:var(--text-acc);
-  letter-spacing:2px;
-  text-align:center;
-  border-top: 1px solid rgba(74,200,240,0.3);
-  border-bottom: 1px solid rgba(74,200,240,0.3);
-  padding:5px 0;
-  margin-bottom:12px;
-}
-
-/* ── Animations ── */
-@keyframes blink { 0%,49%{opacity:1} 50%,100%{opacity:0} }
-.blink { animation: blink 0.9s infinite; }
-
-@keyframes fadeUp {
-  from { opacity:0; transform:translateY(16px); }
-  to   { opacity:1; transform:translateY(0); }
-}
-.fadeup { animation: fadeUp 0.35s ease both; }
-
-@keyframes pulse {
-  0%,100%{transform:scale(1)} 50%{transform:scale(1.04)}
-}
-.pulse { animation:pulse 2s ease infinite; }
-
-/* ── Crowd bleacher ── */
-.crowd-bar {
-  position:absolute;
-  top:0; left:0; right:0;
-  height:28%;
-  overflow:hidden;
-  z-index:0;
+/* ─────────────────────────────────────────────
+   GENDER TOGGLE
+───────────────────────────────────────────── */
+.gender-btn { flex: 1; }
+.gender-btn.active {
+  background: var(--rb-green) !important;
+  border-color: #fff !important;
+  box-shadow: 0 5px 0 #125018, 3px 3px 0 rgba(0,0,0,0.4) !important;
+  color: #90ff90 !important;
 }
 
-/* ── HUD bar (game screen) ── */
-#hud {
-  position:absolute;
-  top:0; left:0; right:0;
-  height:48px;
-  background:rgba(8,14,30,0.92);
-  border-bottom:3px solid var(--border-col);
-  display:flex;
-  align-items:center;
-  padding:0 16px;
-  gap:20px;
-  z-index:20;
+/* ─────────────────────────────────────────────
+   OVERLAYS
+───────────────────────────────────────────── */
+.overlay {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.75);
+  z-index: 100;
+  align-items: center;
+  justify-content: center;
 }
-#hud .hud-block {
-  display:flex; flex-direction:column; gap:2px;
-}
-#hud .hud-label { font-size:5px; color:var(--text-acc); letter-spacing:1px; }
-#hud .hud-val   { font-size:clamp(8px,1.4vw,11px); color:#fff; }
-#hud .hud-sep   { flex:1; }
+.overlay.show { display: flex; }
 
-/* ── Game canvas ── */
-#gameCanvas {
-  position:absolute;
-  top:48px; left:0; right:0;
-  width:100%; height:calc(100% - 48px - 36px);
-  image-rendering:pixelated;
-}
+/* ─────────────────────────────────────────────
+   ANIMATIONS
+───────────────────────────────────────────── */
+@keyframes blink    { 0%,49%{opacity:1} 50%,100%{opacity:0} }
+@keyframes fadeIn   { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:none} }
+@keyframes pulse    { 0%,100%{transform:scale(1)} 50%{transform:scale(1.03)} }
+@keyframes wiggle   { 0%,100%{transform:rotate(0deg)} 25%{transform:rotate(-2deg)} 75%{transform:rotate(2deg)} }
+@keyframes sparkleF { 0%{transform:translateY(0) scale(1);opacity:1} 100%{transform:translateY(-50px) scale(0.3);opacity:0} }
 
-/* ── Bottom control bar ── */
-#controls {
-  position:absolute;
-  bottom:0; left:0; right:0;
-  height:36px;
-  background:rgba(8,14,30,0.92);
-  border-top:3px solid var(--border-col);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:12px;
-  z-index:20;
-}
-#controls .ctrl-hint {
-  font-size:5px;
-  color:var(--silver);
-}
-#controls .ctrl-hint span { color:var(--text-gold); }
+.blink  { animation: blink 0.8s infinite; }
+.fadein { animation: fadeIn 0.3s ease both; }
+.pulse  { animation: pulse 2.2s ease infinite; }
+
+/* ─────────────────────────────────────────────
+   SCROLLBAR
+───────────────────────────────────────────── */
+::-webkit-scrollbar       { width: 5px; }
+::-webkit-scrollbar-track { background: #0a0a18; }
+::-webkit-scrollbar-thumb { background: var(--rb-blue); }
